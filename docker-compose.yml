@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: mathgraph-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mathgraph
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+
+  neo4j:
+    image: neo4j:5
+    container_name: mathgraph-neo4j
+    environment:
+      NEO4J_AUTH: "neo4j/testtest1"
+    ports:
+      - "7474:7474"   # web UI
+      - "7687:7687"   # bolt
+    volumes:
+      - neo4j_data:/data
+
+  redis:
+    image: redis:7
+    container_name: mathgraph-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  pg_data:
+  neo4j_data:
+  redis_data:

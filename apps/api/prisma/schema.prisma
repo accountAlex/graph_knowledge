@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum UserRole {
+  USER
+  COMPOSER
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(USER)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  chatSessions  ChatSession[]
+  progress      UserProgress[]
+  notes         NodeNote[]
+  quizAttempts  QuizAttempt[]
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  topicId   String?
+  title     String
+  messages  Json     @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, updatedAt])
+}
+
+enum NodeRole {
+  TOPIC
+  CONCEPT
+  METHOD
+  SKILL
+  TASK
+}
+
+enum NodeStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum SlotKind {
+  CORE
+  METHODS
+  SKILLS
+  TASKS
+}
+
+model KgNodeRegistry {
+  id          String     @id @default(uuid())
+  neo4jKey    String?    @unique
+  title       String
+  description String?
+  content     String?
+  resources   String[]   @default([])
+  role        NodeRole
+  status      NodeStatus @default(DRAFT)
+  fipiCode    String?
+  version     Int        @default(1)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  versions    KgNodeVersion[]
+}
+
+model KgNodeVersion {
+  id          String     @id @default(uuid())
+  nodeId      String
+  version     Int
+  title       String
+  description String?
+  content     String?
+  resources   String[]   @default([])
+  role        NodeRole
+  status      NodeStatus
+  editedBy    String?
+  changeNote  String?
+  createdAt   DateTime   @default(now())
+
+  node        KgNodeRegistry @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@unique([nodeId, version])
+  @@index([nodeId, version])
+}
+
+model TopicView {
+  id        String   @id @default(uuid())
+  topicId   String   @unique
+  track     String   @default("school")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  slots     TopicViewSlot[]
+}
+
+model TopicViewSlot {
+  id               String   @id @default(uuid())
+  topicViewId      String
+  kind             SlotKind
+  minDepthToExpand Int      @default(1)
+  totalCount       Int      @default(0)
+  orderedNodeIds   String[] @default([])
+
+  topicView        TopicView @relation(fields: [topicViewId], references: [id], onDelete: Cascade)
+  pinned           TopicViewSlotPinned[]
+
+  @@unique([topicViewId, kind])
+}
+
+model TopicViewSlotPinned {
+  id      String @id @default(uuid())
+  slotId  String
+  nodeId  String
+
+  slot    TopicViewSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  @@unique([slotId, nodeId])
+}
+
+model MicroPlan {
+  id        String   @id @default(uuid())
+  planKey   String   @unique
+  payload   Json
+  version   Int      @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NodeNote {
+  id        String   @id @default(uuid())
+  userId    String
+  nodeId    String
+  content   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, nodeId])
+  @@index([userId])
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TEXT_INPUT
+}
+
+model NodeQuestion {
+  id          String       @id @default(uuid())
+  nodeId      String
+  type        QuestionType
+  question    String
+  options     String[]     @default([])   // для MC: варианты ответа
+  answer      String                      // правильный ответ (текст или индекс для MC)
+  explanation String?                     // объяснение после ответа
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  attempts    QuizAttempt[]
+
+  @@index([nodeId])
+}
+
+model QuizAttempt {
+  id         String   @id @default(uuid())
+  userId     String
+  questionId String
+  answer     String
+  correct    Boolean
+
+  createdAt  DateTime @default(now())
+
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   NodeQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId, questionId])
+}
+
+model UserProgress {
+  id        String   @id @default(uuid())
+  userId    String
+  nodeId    String
+
+  completed Boolean  @default(false)
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, nodeId])
+  @@index([userId])
+}
+
