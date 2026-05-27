@@ -81,6 +81,8 @@ npx tsx prisma/seed.ts
 
 ```bash
 # API (порт 3001)
+
+
 npm run dev:api
 
 # Фронтенд (порт 3000)

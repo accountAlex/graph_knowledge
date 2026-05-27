@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import remarkGfm from "remark-gfm";
@@ -227,7 +228,7 @@ export function ChatPanel({ topicId, onClose }: Props) {
 
   return (
     <div
-      className="fixed bottom-0 right-0 sm:bottom-4 sm:right-4 z-50 flex flex-col animate-fade-in-scale"
+      className="fixed bottom-0 right-0 sm:bottom-4 sm:right-4 z-50 flex flex-col"
       style={{
         width: "100vw",
         height: "100dvh",
@@ -239,7 +240,6 @@ export function ChatPanel({ topicId, onClose }: Props) {
         boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
         overflow: "hidden",
       }}
-      // sm breakpoint rounded
       data-chat-panel
     >
       {/* Header */}
@@ -287,126 +287,171 @@ export function ChatPanel({ topicId, onClose }: Props) {
         </div>
       </div>
 
-      {/* History view */}
-      {view === "history" && (
-        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-1.5">
-          {sessions.length === 0 && (
-            <div className="flex-1 flex items-center justify-center" style={{ color: "var(--text-muted)" }}>
-              <div className="text-xs text-center">Нет сохранённых чатов</div>
-            </div>
-          )}
-          {sessions.map((s) => (
-            <div
-              key={s.id}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-[var(--bg-card)]"
-              style={{ border: "1px solid var(--border)" }}
-              onClick={() => openSession(s.id)}
-            >
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium truncate" style={{ color: "var(--text-primary)" }}>
-                  {s.title}
-                </div>
-                <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>
-                  {new Date(s.updatedAt).toLocaleDateString("ru-RU")}
-                </div>
+      {/* View content */}
+      <AnimatePresence mode="wait" initial={false}>
+        {view === "history" ? (
+          <motion.div
+            key="history"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.18 }}
+            className="flex-1 overflow-y-auto p-3 flex flex-col gap-1.5"
+          >
+            {sessions.length === 0 && (
+              <div className="flex-1 flex items-center justify-center" style={{ color: "var(--text-muted)" }}>
+                <div className="text-xs text-center">Нет сохранённых чатов</div>
               </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); handleDeleteSession(s.id); }}
-                className="w-6 h-6 rounded flex items-center justify-center text-[10px] transition-colors hover:bg-[var(--bg-input)]"
-                style={{ color: "var(--text-muted)" }}
+            )}
+            {sessions.map((s, i) => (
+              <motion.div
+                key={s.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-[var(--bg-card)]"
+                style={{ border: "1px solid var(--border)" }}
+                onClick={() => openSession(s.id)}
               >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Chat view */}
-      {view === "chat" && (
-        <>
-          {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-            {messages.length === 0 && (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-center" style={{ color: "var(--text-muted)" }}>
-                  <div className="text-2xl mb-2">∑</div>
-                  <div className="text-xs">
-                    Задайте вопрос по математике
-                    {topicId && " или по текущей теме"}
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium truncate" style={{ color: "var(--text-primary)" }}>
+                    {s.title}
                   </div>
-                  {!isAuth && (
-                    <div className="text-[10px] mt-2" style={{ color: "var(--text-muted)" }}>
-                      Войдите, чтобы сохранять историю чатов
-                    </div>
-                  )}
+                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                    {new Date(s.updatedAt).toLocaleDateString("ru-RU")}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`max-w-[90%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
-                  msg.role === "user" ? "self-end" : "self-start"
-                }`}
-                style={{
-                  background: msg.role === "user" ? "var(--accent)" : "var(--bg-card)",
-                  color: msg.role === "user" ? "#fff" : "var(--text-primary)",
-                  border: msg.role === "assistant" ? "1px solid var(--border)" : undefined,
-                }}
-              >
-                {msg.role === "assistant" ? (
-                  <MessageContent content={msg.content} />
-                ) : (
-                  <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
-                )}
-              </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDeleteSession(s.id); }}
+                  className="w-6 h-6 rounded flex items-center justify-center text-[10px] transition-colors hover:bg-[var(--bg-input)]"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  ✕
+                </button>
+              </motion.div>
             ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="chat"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.18 }}
+            className="flex-1 flex flex-col overflow-hidden"
+          >
+            {/* Messages */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+              {messages.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="flex-1 flex items-center justify-center"
+                >
+                  <div className="text-center" style={{ color: "var(--text-muted)" }}>
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      className="text-2xl mb-2"
+                    >
+                      ∑
+                    </motion.div>
+                    <div className="text-xs">
+                      Задайте вопрос по математике
+                      {topicId && " или по текущей теме"}
+                    </div>
+                    {!isAuth && (
+                      <div className="text-[10px] mt-2" style={{ color: "var(--text-muted)" }}>
+                        Войдите, чтобы сохранять историю чатов
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
 
-            {loading && (
-              <div
-                className="self-start px-3 py-2 rounded-xl text-xs"
-                style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--accent)" }} />
-                  <span className="inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--accent)", animationDelay: "150ms" }} />
-                  <span className="inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--accent)", animationDelay: "300ms" }} />
-                </div>
-              </div>
-            )}
-          </div>
+              {messages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  className={`max-w-[90%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
+                    msg.role === "user" ? "self-end" : "self-start"
+                  }`}
+                  style={{
+                    background: msg.role === "user" ? "var(--accent)" : "var(--bg-card)",
+                    color: msg.role === "user" ? "#fff" : "var(--text-primary)",
+                    border: msg.role === "assistant" ? "1px solid var(--border)" : undefined,
+                  }}
+                >
+                  {msg.role === "assistant" ? (
+                    <MessageContent content={msg.content} />
+                  ) : (
+                    <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
+                  )}
+                </motion.div>
+              ))}
 
-          {/* Input */}
-          <div className="p-3" style={{ borderTop: "1px solid var(--border)" }}>
-            <div className="flex items-end gap-2">
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Спросите что-нибудь..."
-                rows={1}
-                className="input-field flex-1 resize-none text-xs"
-                style={{
-                  maxHeight: "80px",
-                  minHeight: "36px",
-                  paddingTop: "8px",
-                  paddingBottom: "8px",
-                }}
-              />
-              <button
-                onClick={send}
-                disabled={!input.trim() || loading}
-                className="btn-primary !rounded-lg !px-3 !py-2 text-xs disabled:opacity-40 transition-opacity"
-              >
-                ↑
-              </button>
+              <AnimatePresence>
+                {loading && (
+                  <motion.div
+                    key="typing"
+                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="self-start px-3 py-2 rounded-xl text-xs"
+                    style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      {[0, 150, 300].map((delay) => (
+                        <motion.span
+                          key={delay}
+                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 0.8, repeat: Infinity, delay: delay / 1000 }}
+                          className="inline-block w-1.5 h-1.5 rounded-full"
+                          style={{ background: "var(--accent)" }}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
-        </>
-      )}
+
+            {/* Input */}
+            <div className="p-3" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="flex items-end gap-2">
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Спросите что-нибудь..."
+                  rows={1}
+                  className="input-field flex-1 resize-none text-xs"
+                  style={{
+                    maxHeight: "80px",
+                    minHeight: "36px",
+                    paddingTop: "8px",
+                    paddingBottom: "8px",
+                  }}
+                />
+                <motion.button
+                  onClick={send}
+                  disabled={!input.trim() || loading}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="btn-primary !rounded-lg !px-3 !py-2 text-xs disabled:opacity-40"
+                >
+                  ↑
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

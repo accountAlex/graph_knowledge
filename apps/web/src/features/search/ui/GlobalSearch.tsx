@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { searchNodes, type SearchResult } from "@/lib/searchApi";
 
 const ROLE_META: Record<string, { label: string; color: string }> = {
@@ -13,7 +14,6 @@ const ROLE_META: Record<string, { label: string; color: string }> = {
 };
 
 type Props = {
-  /** Called when query changes — lets parent filter its own list */
   onQueryChange?: (q: string) => void;
   placeholder?: string;
   className?: string;
@@ -29,7 +29,6 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Debounced search
   useEffect(() => {
     onQueryChange?.(q);
 
@@ -58,7 +57,6 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [q]);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
@@ -89,6 +87,8 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
     }
   };
 
+  const showEmpty = open && q.trim().length >= 2 && !loading && results.length === 0;
+
   return (
     <div ref={containerRef} className={`relative ${className ?? ""}`}>
       {/* Input */}
@@ -118,92 +118,114 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
           aria-autocomplete="list"
           aria-expanded={open}
         />
-        {q && (
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-xs transition-colors hover:bg-[var(--bg-input)]"
-            style={{ color: "var(--text-muted)" }}
-            onClick={() => { setQ(""); setResults([]); setOpen(false); }}
-          >
-            ✕
-          </button>
-        )}
+        <AnimatePresence>
+          {q && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.7 }}
+              transition={{ duration: 0.15 }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full text-xs transition-colors hover:bg-[var(--bg-input)]"
+              style={{ color: "var(--text-muted)" }}
+              onClick={() => { setQ(""); setResults([]); setOpen(false); }}
+            >
+              ✕
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Dropdown */}
-      {open && results.length > 0 && (
-        <div
-          className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl overflow-hidden shadow-2xl"
-          style={{
-            background: "var(--bg-secondary)",
-            border: "1px solid var(--border)",
-            boxShadow: "0 20px 60px var(--shadow-color)",
-          }}
-        >
-          {results.map((r, i) => {
-            const meta = ROLE_META[r.role] ?? { label: r.role, color: "var(--text-muted)" };
-            const isActive = i === activeIdx;
-            return (
-              <button
-                key={r.id}
-                className="w-full text-left px-4 py-3 flex items-start gap-3 transition-colors"
-                style={{
-                  background: isActive ? "var(--bg-card)" : "transparent",
-                  borderTop: i > 0 ? "1px solid var(--border-subtle)" : undefined,
-                }}
-                onMouseEnter={() => setActiveIdx(i)}
-                onClick={() => navigate(r)}
-              >
-                {/* Role dot */}
-                <div
-                  className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                  style={{ background: meta.color }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium truncate">{r.title}</span>
-                    <span
-                      className="badge shrink-0 text-[10px]"
-                      style={{ background: `${meta.color}20`, color: meta.color }}
-                    >
-                      {meta.label}
-                    </span>
-                    {r.fipiCode && (
-                      <span className="text-[10px] shrink-0" style={{ color: "var(--text-muted)" }}>
-                        {r.fipiCode}
+      <AnimatePresence>
+        {open && results.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl overflow-hidden shadow-2xl"
+            style={{
+              background: "var(--bg-secondary)",
+              border: "1px solid var(--border)",
+              boxShadow: "0 20px 60px var(--shadow-color)",
+              transformOrigin: "top center",
+            }}
+          >
+            {results.map((r, i) => {
+              const meta = ROLE_META[r.role] ?? { label: r.role, color: "var(--text-muted)" };
+              const isActive = i === activeIdx;
+              return (
+                <motion.button
+                  key={r.id}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.03, duration: 0.18 }}
+                  className="w-full text-left px-4 py-3 flex items-start gap-3 transition-colors"
+                  style={{
+                    background: isActive ? "var(--bg-card)" : "transparent",
+                    borderTop: i > 0 ? "1px solid var(--border-subtle)" : undefined,
+                  }}
+                  onMouseEnter={() => setActiveIdx(i)}
+                  onClick={() => navigate(r)}
+                >
+                  <div
+                    className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                    style={{ background: meta.color }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-sm font-medium truncate">{r.title}</span>
+                      <span
+                        className="badge shrink-0 text-[10px]"
+                        style={{ background: `${meta.color}20`, color: meta.color }}
+                      >
+                        {meta.label}
                       </span>
+                      {r.fipiCode && (
+                        <span className="text-[10px] shrink-0" style={{ color: "var(--text-muted)" }}>
+                          {r.fipiCode}
+                        </span>
+                      )}
+                    </div>
+                    {r.description && (
+                      <p className="text-[11px] truncate" style={{ color: "var(--text-muted)" }}>
+                        {r.description}
+                      </p>
                     )}
                   </div>
-                  {r.description && (
-                    <p className="text-[11px] truncate" style={{ color: "var(--text-muted)" }}>
-                      {r.description}
-                    </p>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+                </motion.button>
+              );
+            })}
 
-          <div
-            className="px-4 py-2 text-[10px] text-right"
-            style={{ color: "var(--text-muted)", borderTop: "1px solid var(--border)" }}
+            <div
+              className="px-4 py-2 text-[10px] text-right"
+              style={{ color: "var(--text-muted)", borderTop: "1px solid var(--border)" }}
+            >
+              ↑↓ навигация · Enter для выбора · Esc закрыть
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showEmpty && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl px-4 py-5 text-center text-xs"
+            style={{
+              background: "var(--bg-secondary)",
+              border: "1px solid var(--border)",
+              color: "var(--text-muted)",
+              transformOrigin: "top center",
+            }}
           >
-            ↑↓ навигация · Enter для выбора · Esc закрыть
-          </div>
-        </div>
-      )}
-
-      {open && q.trim().length >= 2 && !loading && results.length === 0 && (
-        <div
-          className="absolute top-full left-0 right-0 mt-1.5 z-50 rounded-2xl px-4 py-5 text-center text-xs"
-          style={{
-            background: "var(--bg-secondary)",
-            border: "1px solid var(--border)",
-            color: "var(--text-muted)",
-          }}
-        >
-          Ничего не найдено по запросу «{q}»
-        </div>
-      )}
+            Ничего не найдено по запросу «{q}»
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

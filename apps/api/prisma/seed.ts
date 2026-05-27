@@ -3013,7 +3013,7 @@ const GENERATED_PREREQS: Array<{ from: string; to: string }> = [
 ];
 
 // ── Call this from main() ──
-async function seedGenerated() {
+async function seedGenerated(skipNeo4j = false) {
   // Postgres: upsert nodes
   for (const n of GENERATED_REGISTRY) {
     await prisma.kgNodeRegistry.upsert({
@@ -3031,6 +3031,11 @@ async function seedGenerated() {
     });
   }
   console.log(`Upserted ${GENERATED_REGISTRY.length} generated nodes`);
+
+  if (skipNeo4j) {
+    console.log('Neo4j: skipped (SKIP_NEO4J=true)');
+    return;
+  }
 
   // Neo4j: upsert nodes + edges
   const driver = neo4j.driver(
@@ -3064,11 +3069,12 @@ async function seedGenerated() {
 }
 
 async function main() {
+  const skipNeo4j = process.env.SKIP_NEO4J === "true";
   await seedPostgres();
-  await seedNeo4j();
+  if (!skipNeo4j) await seedNeo4j();
   await seedAdminUser();
   await seedQuiz();
-  await seedGenerated();
+  await seedGenerated(skipNeo4j);
   console.log("Seed done: 65 topics, 520+ nodes, 640+ edges, 10 quiz questions");
 }
 

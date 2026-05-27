@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useAuth } from "@/providers/AuthProvider";
 
-// ── Nav link definitions ──────────────────────────────────────────────────────
 const PRIMARY_LINKS = [
   { href: "/route",    label: "AI-маршрут", icon: "✦" },
   { href: "/presets",  label: "Треки",      icon: "◈" },
@@ -17,7 +17,6 @@ const SECONDARY_LINKS = [
   { href: "/analytics", label: "Аналитика", icon: "◉" },
 ];
 
-// ── Mobile bottom nav items ───────────────────────────────────────────────────
 const MOBILE_NAV = [
   { href: "/",         label: "Главная",    icon: "⌂"  },
   { href: "/presets",  label: "Треки",      icon: "◈"  },
@@ -26,7 +25,11 @@ const MOBILE_NAV = [
   { href: "/profile",  label: "Профиль",    icon: "◯"  },
 ];
 
-// ── More dropdown ─────────────────────────────────────────────────────────────
+const dropdownItemVariants = {
+  hidden: { opacity: 0, x: -6 },
+  visible: (i: number) => ({ opacity: 1, x: 0, transition: { delay: i * 0.04, duration: 0.18 } }),
+};
+
 function MoreDropdown({ links }: { links: { href: string; label: string; icon: string }[] }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -46,46 +49,61 @@ function MoreDropdown({ links }: { links: { href: string; label: string; icon: s
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors duration-200"
         style={{
           background: open || hasActive ? "var(--accent-subtle)" : "transparent",
           color: open || hasActive ? "var(--accent)" : "var(--text-muted)",
         }}
       >
         Ещё
-        <span style={{ fontSize: 9, opacity: 0.7 }}>{open ? "▲" : "▼"}</span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          style={{ fontSize: 9, opacity: 0.7, display: "inline-block" }}
+        >
+          ▼
+        </motion.span>
       </button>
 
-      {open && (
-        <div
-          className="absolute right-0 top-full mt-1.5 rounded-xl overflow-hidden z-50 animate-fade-in"
-          style={{
-            background: "var(--bg-secondary)",
-            border: "1px solid var(--border)",
-            minWidth: 160,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-          }}
-        >
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2.5 px-4 py-2.5 text-xs transition-colors hover:bg-[var(--bg-card)]"
-              style={{ color: pathname === l.href ? "var(--accent)" : "var(--text-secondary)" }}
-            >
-              <span style={{ fontSize: 13 }}>{l.icon}</span>
-              {l.label}
-              {pathname === l.href && <span className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: "var(--accent)" }} />}
-            </Link>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: -6 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.94, y: -6 }}
+            transition={{ type: "spring", stiffness: 450, damping: 30 }}
+            className="absolute right-0 top-full mt-1.5 rounded-xl overflow-hidden z-50"
+            style={{
+              background: "var(--bg-secondary)",
+              border: "1px solid var(--border)",
+              minWidth: 160,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+              transformOrigin: "top right",
+            }}
+          >
+            {links.map((l, i) => (
+              <motion.div key={l.href} custom={i} variants={dropdownItemVariants} initial="hidden" animate="visible">
+                <Link
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2.5 px-4 py-2.5 text-xs transition-colors hover:bg-[var(--bg-card)]"
+                  style={{ color: pathname === l.href ? "var(--accent)" : "var(--text-secondary)" }}
+                >
+                  <span style={{ fontSize: 13 }}>{l.icon}</span>
+                  {l.label}
+                  {pathname === l.href && (
+                    <span className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: "var(--accent)" }} />
+                  )}
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-// ── Avatar ────────────────────────────────────────────────────────────────────
 function Avatar({ name, email }: { name?: string | null; email: string }) {
   const letter = (name?.[0] || email[0]).toUpperCase();
   return (
@@ -101,7 +119,6 @@ function Avatar({ name, email }: { name?: string | null; email: string }) {
   );
 }
 
-// ── Main Navbar ───────────────────────────────────────────────────────────────
 export function Navbar() {
   const pathname = usePathname();
   const { theme, toggle } = useTheme();
@@ -138,15 +155,18 @@ export function Navbar() {
         <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shadow-lg transition-transform group-hover:scale-105"
+            <motion.div
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shadow-lg"
               style={{
                 background: "linear-gradient(135deg, var(--accent), var(--accent-hover))",
                 color: "#fff",
               }}
             >
               M
-            </div>
+            </motion.div>
             <span className="font-bold text-base tracking-tight" style={{ color: "var(--text-primary)" }}>
               MathGraph
             </span>
@@ -158,16 +178,21 @@ export function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                style={{
-                  background: isActive(l.href) ? "var(--accent-subtle)" : "transparent",
-                  color: isActive(l.href) ? "var(--accent)" : "var(--text-muted)",
-                }}
+                className="relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium"
+                style={{ color: isActive(l.href) ? "var(--accent)" : "var(--text-muted)" }}
               >
-                <span style={{ fontSize: 12 }}>{l.icon}</span>
-                {l.label}
                 {isActive(l.href) && (
-                  <span className="w-1 h-1 rounded-full" style={{ background: "var(--accent)" }} />
+                  <motion.div
+                    layoutId="nav-active-pill"
+                    className="absolute inset-0 rounded-xl"
+                    style={{ background: "var(--accent-subtle)" }}
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <span className="relative" style={{ fontSize: 12 }}>{l.icon}</span>
+                <span className="relative">{l.label}</span>
+                {isActive(l.href) && (
+                  <span className="relative w-1 h-1 rounded-full" style={{ background: "var(--accent)" }} />
                 )}
               </Link>
             ))}
@@ -197,14 +222,27 @@ export function Navbar() {
               </Link>
             )}
 
-            <button
+            <motion.button
               onClick={toggle}
-              className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-[var(--bg-card)]"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-[var(--bg-card)]"
               style={{ color: "var(--text-muted)", fontSize: 15 }}
               title={theme === "dark" ? "Светлая тема" : "Тёмная тема"}
             >
-              {theme === "dark" ? "☀" : "☾"}
-            </button>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={theme}
+                  initial={{ opacity: 0, rotate: -90, scale: 0.6 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.6 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {theme === "dark" ? "☀" : "☾"}
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
       </header>
@@ -219,7 +257,7 @@ export function Navbar() {
           borderBottom: "1px solid var(--border)",
         }}
       >
-        <div className="px-4 h-13 flex items-center justify-between" style={{ height: 52 }}>
+        <div className="px-4 flex items-center justify-between" style={{ height: 52 }}>
           <Link href="/" className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs"
@@ -245,13 +283,24 @@ export function Navbar() {
                 Войти
               </Link>
             )}
-            <button
+            <motion.button
               onClick={toggle}
+              whileTap={{ scale: 0.85 }}
               className="w-8 h-8 rounded-xl flex items-center justify-center"
               style={{ color: "var(--text-muted)", fontSize: 14 }}
             >
-              {theme === "dark" ? "☀" : "☾"}
-            </button>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={theme}
+                  initial={{ opacity: 0, rotate: -60, scale: 0.7 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 60, scale: 0.7 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {theme === "dark" ? "☀" : "☾"}
+                </motion.span>
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
       </header>
@@ -274,14 +323,28 @@ export function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all min-w-[52px]"
-                style={{
-                  background: active ? "var(--accent-subtle)" : "transparent",
-                  color: active ? "var(--accent)" : "var(--text-muted)",
-                }}
+                className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl min-w-[52px]"
+                style={{ color: active ? "var(--accent)" : "var(--text-muted)" }}
               >
-                <span style={{ fontSize: 18, lineHeight: 1 }}>{l.icon}</span>
-                <span style={{ fontSize: 10, fontWeight: active ? 600 : 400 }}>{l.label}</span>
+                {active && (
+                  <motion.div
+                    layoutId="mobile-nav-active"
+                    className="absolute inset-0 rounded-xl"
+                    style={{ background: "var(--accent-subtle)" }}
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <motion.span
+                  animate={{ scale: active ? 1.15 : 1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="relative"
+                  style={{ fontSize: 18, lineHeight: 1 }}
+                >
+                  {l.icon}
+                </motion.span>
+                <span className="relative" style={{ fontSize: 10, fontWeight: active ? 600 : 400 }}>
+                  {l.label}
+                </span>
               </Link>
             );
           })}
