@@ -16,7 +16,7 @@ COPY apps/api/ ./apps/api/
 # Build
 WORKDIR /app/apps/api
 RUN npx prisma generate
-RUN npx nest build
+RUN npx nest build && ls -la dist/ && test -f dist/app.module.js
 
 EXPOSE 3001
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
