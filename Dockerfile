@@ -15,7 +15,7 @@ COPY apps/api/ ./apps/api/
 
 # Build
 WORKDIR /app/apps/api
-RUN npx prisma generate
+RUN DATABASE_URL="postgresql://build:build@localhost/build" npx prisma generate
 RUN npx nest build && ls -la dist/ && test -f dist/app.module.js
 
 EXPOSE 3001
