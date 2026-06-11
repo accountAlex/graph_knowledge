@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models.js"
-import { type PrismaClient } from "./class.js"
+import type * as Prisma from "../models"
+import { type PrismaClient } from "./class"
 
-export type * from '../models.js'
+export type * from '../models'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -395,7 +395,8 @@ export const ModelName = {
   NodeNote: 'NodeNote',
   NodeQuestion: 'NodeQuestion',
   QuizAttempt: 'QuizAttempt',
-  UserProgress: 'UserProgress'
+  UserProgress: 'UserProgress',
+  LearningEvent: 'LearningEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -411,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "chatSession" | "kgNodeRegistry" | "kgNodeVersion" | "topicView" | "topicViewSlot" | "topicViewSlotPinned" | "microPlan" | "nodeNote" | "nodeQuestion" | "quizAttempt" | "userProgress"
+    modelProps: "user" | "chatSession" | "kgNodeRegistry" | "kgNodeVersion" | "topicView" | "topicViewSlot" | "topicViewSlotPinned" | "microPlan" | "nodeNote" | "nodeQuestion" | "quizAttempt" | "userProgress" | "learningEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1303,6 +1304,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LearningEvent: {
+      payload: Prisma.$LearningEventPayload<ExtArgs>
+      fields: Prisma.LearningEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LearningEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LearningEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>
+        }
+        findFirst: {
+          args: Prisma.LearningEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LearningEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>
+        }
+        findMany: {
+          args: Prisma.LearningEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>[]
+        }
+        create: {
+          args: Prisma.LearningEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>
+        }
+        createMany: {
+          args: Prisma.LearningEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LearningEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>[]
+        }
+        delete: {
+          args: Prisma.LearningEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>
+        }
+        update: {
+          args: Prisma.LearningEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.LearningEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LearningEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LearningEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.LearningEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LearningEventPayload>
+        }
+        aggregate: {
+          args: Prisma.LearningEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLearningEvent>
+        }
+        groupBy: {
+          args: Prisma.LearningEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LearningEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LearningEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LearningEventCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1493,11 +1568,26 @@ export const UserProgressScalarFieldEnum = {
   nodeId: 'nodeId',
   completed: 'completed',
   completedAt: 'completedAt',
+  mastery: 'mastery',
+  confidence: 'confidence',
+  lastEventAt: 'lastEventAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
+
+
+export const LearningEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  nodeId: 'nodeId',
+  type: 'type',
+  meta: 'meta',
+  createdAt: 'createdAt'
+} as const
+
+export type LearningEventScalarFieldEnum = (typeof LearningEventScalarFieldEnum)[keyof typeof LearningEventScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1513,6 +1603,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1680,6 +1778,34 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'MasteryLevel'
+ */
+export type EnumMasteryLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MasteryLevel'>
+    
+
+
+/**
+ * Reference to a field of type 'MasteryLevel[]'
+ */
+export type ListEnumMasteryLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MasteryLevel[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LearningEventType'
+ */
+export type EnumLearningEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LearningEventType'>
+    
+
+
+/**
+ * Reference to a field of type 'LearningEventType[]'
+ */
+export type ListEnumLearningEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LearningEventType[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1799,6 +1925,7 @@ export type GlobalOmitConfig = {
   nodeQuestion?: Prisma.NodeQuestionOmit
   quizAttempt?: Prisma.QuizAttemptOmit
   userProgress?: Prisma.UserProgressOmit
+  learningEvent?: Prisma.LearningEventOmit
 }
 
 /* Types for Logging */

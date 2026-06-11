@@ -21,7 +21,7 @@ import { useMobileDetect } from "@/hooks/useMobileDetect";
 import { useSwipeDown } from "@/hooks/useSwipeDown";
 import { useRef } from "react";
 import { useAuth } from "@/providers/AuthProvider";
-import { fetchTopicProgress, toggleNodeProgress, type TopicProgress } from "@/lib/progressApi";
+import { fetchTopicProgress, toggleNodeProgress, fetchUnlocked, recordNodeView, type TopicProgress, type MasteryLevel } from "@/lib/progressApi";
 
 type Props = {
   payload: TopicPagePayload;
@@ -44,6 +44,8 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const [progress, setProgress] = useState<TopicProgress | null>(null);
+  const [heatmap, setHeatmap] = useState(false);
+  const [unlockedSet, setUnlockedSet] = useState<Set<string>>(new Set());
   const panelRef = useRef<HTMLDivElement>(null);
   useSwipeDown(panelRef, () => setPanelOpen(false));
 
@@ -65,6 +67,20 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     return new Set(progress.nodes.filter((n) => n.completed).map((n) => n.nodeId));
   }, [progress]);
 
+  const masteryByNodeId = useMemo(() => {
+    const map = new Map<string, MasteryLevel>();
+    if (progress) for (const n of progress.nodes) map.set(n.nodeId, n.mastery);
+    return map;
+  }, [progress]);
+
+  useEffect(() => {
+    if (!isAuth || allNodeIds.length === 0) return;
+    const topicSet = new Set(allNodeIds);
+    fetchUnlocked()
+      .then((ids) => setUnlockedSet(new Set(ids.filter((id) => topicSet.has(id)))))
+      .catch(() => { /* ignore */ });
+  }, [isAuth, allNodeIds]);
+
   const handleToggle = useCallback(async (nodeId: string) => {
     if (!isAuth) return;
     try {
@@ -75,16 +91,44 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
           ...prev,
           completed: res.completed ? prev.completed + 1 : prev.completed - 1,
           nodes: prev.nodes.map((n) =>
-            n.nodeId === nodeId ? { ...n, completed: res.completed } : n,
+            n.nodeId === nodeId ? { ...n, completed: res.completed, mastery: res.mastery } : n,
           ),
         };
       });
+      // completing a node may unlock its dependents — refresh the set
+      const topicSet = new Set(allNodeIds);
+      fetchUnlocked()
+        .then((ids) => setUnlockedSet(new Set(ids.filter((id) => topicSet.has(id)))))
+        .catch(() => { /* ignore */ });
     } catch { /* ignore */ }
-  }, [isAuth]);
+  }, [isAuth, allNodeIds]);
+
+  // Gaps = prerequisite ancestors of the selected node that aren't completed yet
+  const gapSet = useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    const prereqEdges = payload.edges.filter((e) => e.kind === "PREREQ_REQUIRED");
+    const visited = new Set<string>();
+    const queue = [selectedNodeId];
+    while (queue.length) {
+      const cur = queue.shift()!;
+      for (const e of prereqEdges) {
+        if (e.to === cur && !visited.has(e.from)) {
+          visited.add(e.from);
+          queue.push(e.from);
+        }
+      }
+    }
+    const gaps = new Set<string>();
+    for (const id of visited) if (!completedSet.has(id)) gaps.add(id);
+    return gaps;
+  }, [selectedNodeId, payload.edges, completedSet]);
 
   const graph = useMemo(() => {
-    return buildGraphModel({ payload, mode, selectedNodeId });
-  }, [payload, mode, selectedNodeId]);
+    return buildGraphModel({
+      payload, mode, selectedNodeId,
+      masteryByNodeId, completedSet, unlockedSet, gapSet, heatmap,
+    });
+  }, [payload, mode, selectedNodeId, masteryByNodeId, completedSet, unlockedSet, gapSet, heatmap]);
 
   const onSelect = useCallback((id: string) => {
     setSelectedNodeId(id);
@@ -101,8 +145,9 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     // Auto-open details panel when clicking any non-topic node
     if (node && node.id !== payload.topicId) {
       setPanelOpen(true);
+      if (isAuth) recordNodeView(id);
     }
-  }, [payload, router]);
+  }, [payload, router, isAuth]);
 
   const handleKeySelectNode = useCallback((id: string | null) => {
     if (id) onSelect(id);
@@ -185,6 +230,22 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
             </span>
             <DepthControl depth={payload.depth} onChange={onDepthChange} />
           </div>
+
+          {/* Heatmap toggle */}
+          {isAuth && (
+            <button
+              onClick={() => setHeatmap((v) => !v)}
+              className="glass-card !rounded-xl px-3 py-2 flex items-center gap-2 !transform-none text-xs font-medium"
+              style={{
+                color: heatmap ? "var(--accent)" : "var(--text-muted)",
+                outline: heatmap ? "1px solid var(--accent)" : "none",
+              }}
+              title="Тепловая карта владения: цвет узла = уровень освоения"
+            >
+              <span style={{ fontSize: 13 }}>◍</span>
+              <span className="hidden sm:inline">Карта прогресса</span>
+            </button>
+          )}
         </motion.div>
 
         {/* ── Details & keyboard help buttons ── */}
@@ -478,6 +539,40 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
                           </span>
                         )}
                       </div>
+
+                      {isAuth && gapSet.size > 0 && (
+                        <div
+                          className="mb-3 rounded-xl p-3"
+                          style={{ background: "rgba(255,107,107,0.06)", border: "1px solid rgba(255,107,107,0.25)" }}
+                        >
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <span style={{ color: "var(--danger)" }} className="text-xs font-semibold">
+                              Пробелы — изучи перед этим
+                            </span>
+                            <span
+                              className="text-[10px] px-1.5 py-0.5 rounded-full"
+                              style={{ background: "rgba(255,107,107,0.15)", color: "var(--danger)" }}
+                            >
+                              {gapSet.size}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {[...gapSet].map((gid) => {
+                              const gn = payload.nodes.find((n) => n.id === gid);
+                              return (
+                                <button
+                                  key={gid}
+                                  onClick={() => onSelect(gid)}
+                                  className="text-[11px] px-2 py-1 rounded-lg transition-colors hover:border-[var(--danger)]"
+                                  style={{ background: "var(--bg-card)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}
+                                >
+                                  {gn?.title ?? gid}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
 
                       {selectedNode.description && (
                         <div className="mb-3">

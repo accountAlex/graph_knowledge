@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.js'
-export type * from './prismaNamespace.js'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -62,7 +62,8 @@ export const ModelName = {
   NodeNote: 'NodeNote',
   NodeQuestion: 'NodeQuestion',
   QuizAttempt: 'QuizAttempt',
-  UserProgress: 'UserProgress'
+  UserProgress: 'UserProgress',
+  LearningEvent: 'LearningEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -232,11 +233,26 @@ export const UserProgressScalarFieldEnum = {
   nodeId: 'nodeId',
   completed: 'completed',
   completedAt: 'completedAt',
+  mastery: 'mastery',
+  confidence: 'confidence',
+  lastEventAt: 'lastEventAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
+
+
+export const LearningEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  nodeId: 'nodeId',
+  type: 'type',
+  meta: 'meta',
+  createdAt: 'createdAt'
+} as const
+
+export type LearningEventScalarFieldEnum = (typeof LearningEventScalarFieldEnum)[keyof typeof LearningEventScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -252,6 +268,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

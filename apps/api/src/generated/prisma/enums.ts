@@ -53,3 +53,26 @@ export const QuestionType = {
 } as const
 
 export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType]
+
+
+export const MasteryLevel = {
+  UNSEEN: 'UNSEEN',
+  SEEN: 'SEEN',
+  PRACTICED: 'PRACTICED',
+  MASTERED: 'MASTERED'
+} as const
+
+export type MasteryLevel = (typeof MasteryLevel)[keyof typeof MasteryLevel]
+
+
+export const LearningEventType = {
+  VIEW: 'VIEW',
+  COMPLETE: 'COMPLETE',
+  UNCOMPLETE: 'UNCOMPLETE',
+  QUIZ_CORRECT: 'QUIZ_CORRECT',
+  QUIZ_WRONG: 'QUIZ_WRONG',
+  REVIEW: 'REVIEW',
+  MASTERY_CHANGE: 'MASTERY_CHANGE'
+} as const
+
+export type LearningEventType = (typeof LearningEventType)[keyof typeof LearningEventType]

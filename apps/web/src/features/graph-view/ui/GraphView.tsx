@@ -14,6 +14,7 @@ import ReactFlow, {
   BackgroundVariant,
 } from "reactflow";
 import { useAnimatedNodes } from "../hooks/useAnimatedNodes";
+import type { MasteryLevel } from "@mathgraph/shared";
 
 export type GraphUIMode = "overview" | "focus" | "path" | "prereq";
 
@@ -27,6 +28,19 @@ export type KgNodeData = {
   isPrereq: boolean;
   width: number;
   columnLabel?: string;
+  // ── Block 1: mastery heatmap / gaps ──
+  mastery?: MasteryLevel;
+  completed?: boolean;
+  isUnlocked?: boolean;   // all prerequisites done → newly learnable
+  isGap?: boolean;        // missing prerequisite for the selected node
+  heatmap?: boolean;      // heatmap mode active
+};
+
+const MASTERY_STYLE: Record<MasteryLevel, { color: string; label: string }> = {
+  UNSEEN:    { color: "#64748b", label: "не начато" },
+  SEEN:      { color: "#fbbf24", label: "знакомо" },
+  PRACTICED: { color: "#38bdf8", label: "отработано" },
+  MASTERED:  { color: "#34d399", label: "освоено" },
 };
 
 export type RowLabelData = {
@@ -51,24 +65,51 @@ function KgNode({ data }: { data: KgNodeData }) {
   const isActive = isHero || data.isSelected;
   const isPrereq = data.isPrereq && !isActive;
 
-  const borderStyle = isActive
+  const mastery = data.mastery ?? "UNSEEN";
+  const m = MASTERY_STYLE[mastery];
+  const isGap = !!data.isGap;
+  const isUnlocked = !!data.isUnlocked && !data.completed;
+  const heat = !!data.heatmap;
+
+  // Border precedence: gap → active → unlocked → heatmap mastery → prereq → role
+  const borderStyle = isGap
+    ? `2px solid var(--danger)`
+    : isActive
     ? `2px solid var(--accent)`
+    : isUnlocked
+    ? `2px solid var(--accent)`
+    : heat && mastery !== "UNSEEN"
+    ? `2px solid ${m.color}`
     : isPrereq
     ? `2px solid ${PREREQ_COLOR}`
     : data.isExternal
     ? `1px dashed var(--border)`
     : `1px solid var(--border)`;
 
-  const shadowStyle = isActive
+  const shadowStyle = isGap
+    ? "0 4px 22px rgba(255,107,107,0.40)"
+    : isUnlocked
+    ? "0 0 0 3px var(--accent-subtle), 0 8px 26px var(--accent-glow)"
+    : isActive
     ? "0 6px 24px var(--accent-glow)"
+    : heat && mastery === "MASTERED"
+    ? "0 4px 20px rgba(52,211,153,0.30)"
     : isPrereq
     ? `0 4px 20px ${PREREQ_GLOW}`
     : "0 2px 12px var(--shadow-color)";
 
+  const bgStyle = isGap
+    ? "rgba(255,107,107,0.07)"
+    : heat && mastery !== "UNSEEN"
+    ? `${m.color}14`
+    : isPrereq
+    ? "rgba(245,158,11,0.06)"
+    : "var(--bg-card)";
+
   return (
     <div
       style={{
-        background: isPrereq ? "rgba(245,158,11,0.06)" : "var(--bg-card)",
+        background: bgStyle,
         border: borderStyle,
         color: "var(--text-primary)",
         opacity: data.isDimmed ? 0.12 : 1,
@@ -76,18 +117,31 @@ function KgNode({ data }: { data: KgNodeData }) {
         boxShadow: shadowStyle,
         transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
-      className="rounded-2xl px-4 py-3.5 text-center cursor-pointer hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-lg relative"
+      className={`rounded-2xl px-4 py-3.5 text-center cursor-pointer hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-lg relative ${isUnlocked ? "animate-pulse-glow" : ""}`}
     >
       {/* Top bar */}
       <div
         className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl transition-all duration-300"
         style={{
-          background: isPrereq
+          background: isGap
+            ? "var(--danger)"
+            : heat && mastery !== "UNSEEN"
+            ? `linear-gradient(90deg, ${m.color}, ${m.color}88)`
+            : isPrereq
             ? `linear-gradient(90deg, ${PREREQ_COLOR}, #fcd34d)`
             : `linear-gradient(90deg, ${roleColor}, var(--accent))`,
-          opacity: data.isDimmed ? 0.2 : isActive || isPrereq ? 1 : 0.6,
+          opacity: data.isDimmed ? 0.2 : isActive || isPrereq || heat || isGap ? 1 : 0.6,
         }}
       />
+
+      {/* Mastery corner indicator */}
+      {(data.completed || mastery !== "UNSEEN") && (
+        <span
+          title={m.label}
+          className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full"
+          style={{ background: m.color, boxShadow: `0 0 0 2px var(--bg-card)` }}
+        />
+      )}
 
       <div
         className={`font-semibold leading-snug ${isHero ? "text-sm" : "text-[13px]"}`}
@@ -102,25 +156,30 @@ function KgNode({ data }: { data: KgNodeData }) {
       </div>
 
       <div className="flex items-center justify-center gap-1.5 mt-2.5 flex-wrap">
-        <span
-          className="badge"
-          style={{ background: roleBg, color: roleColor }}
-        >
+        <span className="badge" style={{ background: roleBg, color: roleColor }}>
           {data.role}
         </span>
-        {isPrereq && (
-          <span
-            className="badge text-[10px]"
-            style={{ background: "rgba(245,158,11,0.15)", color: PREREQ_COLOR }}
-          >
+        {isGap ? (
+          <span className="badge text-[10px]" style={{ background: "rgba(255,107,107,0.15)", color: "var(--danger)" }}>
+            пробел
+          </span>
+        ) : isUnlocked ? (
+          <span className="badge text-[10px]" style={{ background: "var(--accent-subtle)", color: "var(--accent)" }}>
+            доступно
+          </span>
+        ) : heat && mastery !== "UNSEEN" ? (
+          <span className="badge text-[10px]" style={{ background: `${m.color}22`, color: m.color }}>
+            {m.label}
+          </span>
+        ) : isPrereq ? (
+          <span className="badge text-[10px]" style={{ background: "rgba(245,158,11,0.15)", color: PREREQ_COLOR }}>
             нужен
           </span>
-        )}
-        {data.isExternal && !isPrereq && (
+        ) : data.isExternal ? (
           <span style={{ color: "var(--text-muted)" }} className="text-[10px]">
             prereq
           </span>
-        )}
+        ) : null}
       </div>
 
       <Handle

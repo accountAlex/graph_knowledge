@@ -1,4 +1,5 @@
 import { type Edge, type Node } from "reactflow";
+import { type MasteryLevel } from "@mathgraph/shared";
 import { type TopicPagePayload } from "@/lib/topicPageApi";
 import { type GraphUIMode, type KgNodeData, type RowLabelData } from "@/features/graph-view/ui/GraphView";
 
@@ -71,8 +72,22 @@ export function buildGraphModel(params: {
   payload: TopicPagePayload;
   mode: GraphUIMode;
   selectedNodeId: string | null;
+  masteryByNodeId?: Map<string, MasteryLevel>;
+  completedSet?: Set<string>;
+  unlockedSet?: Set<string>;
+  gapSet?: Set<string>;
+  heatmap?: boolean;
 }): { nodes: Node<KgNodeData | RowLabelData>[]; edges: Edge[] } {
-  const { payload, mode, selectedNodeId } = params;
+  const {
+    payload,
+    mode,
+    selectedNodeId,
+    masteryByNodeId,
+    completedSet,
+    unlockedSet,
+    gapSet,
+    heatmap = false,
+  } = params;
 
   // Build slot membership
   const slotByNodeId = new Map<string, string>();
@@ -256,6 +271,11 @@ export function buildGraphModel(params: {
           isPrereq,
           width,
           columnLabel: label,
+          mastery: masteryByNodeId?.get(id),
+          completed: completedSet?.has(id) ?? false,
+          isUnlocked: unlockedSet?.has(id) ?? false,
+          isGap: gapSet?.has(id) ?? false,
+          heatmap,
         },
       } as Node<KgNodeData>);
     });

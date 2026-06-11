@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model UserProgress
@@ -20,8 +20,18 @@ export type UserProgressModel = runtime.Types.Result.DefaultSelection<Prisma.$Us
 
 export type AggregateUserProgress = {
   _count: UserProgressCountAggregateOutputType | null
+  _avg: UserProgressAvgAggregateOutputType | null
+  _sum: UserProgressSumAggregateOutputType | null
   _min: UserProgressMinAggregateOutputType | null
   _max: UserProgressMaxAggregateOutputType | null
+}
+
+export type UserProgressAvgAggregateOutputType = {
+  confidence: number | null
+}
+
+export type UserProgressSumAggregateOutputType = {
+  confidence: number | null
 }
 
 export type UserProgressMinAggregateOutputType = {
@@ -30,6 +40,9 @@ export type UserProgressMinAggregateOutputType = {
   nodeId: string | null
   completed: boolean | null
   completedAt: Date | null
+  mastery: $Enums.MasteryLevel | null
+  confidence: number | null
+  lastEventAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +53,9 @@ export type UserProgressMaxAggregateOutputType = {
   nodeId: string | null
   completed: boolean | null
   completedAt: Date | null
+  mastery: $Enums.MasteryLevel | null
+  confidence: number | null
+  lastEventAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,11 +66,22 @@ export type UserProgressCountAggregateOutputType = {
   nodeId: number
   completed: number
   completedAt: number
+  mastery: number
+  confidence: number
+  lastEventAt: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type UserProgressAvgAggregateInputType = {
+  confidence?: true
+}
+
+export type UserProgressSumAggregateInputType = {
+  confidence?: true
+}
 
 export type UserProgressMinAggregateInputType = {
   id?: true
@@ -62,6 +89,9 @@ export type UserProgressMinAggregateInputType = {
   nodeId?: true
   completed?: true
   completedAt?: true
+  mastery?: true
+  confidence?: true
+  lastEventAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +102,9 @@ export type UserProgressMaxAggregateInputType = {
   nodeId?: true
   completed?: true
   completedAt?: true
+  mastery?: true
+  confidence?: true
+  lastEventAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +115,9 @@ export type UserProgressCountAggregateInputType = {
   nodeId?: true
   completed?: true
   completedAt?: true
+  mastery?: true
+  confidence?: true
+  lastEventAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -125,6 +161,18 @@ export type UserProgressAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserProgressAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserProgressSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserProgressMinAggregateInputType
@@ -155,6 +203,8 @@ export type UserProgressGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   _count?: UserProgressCountAggregateInputType | true
+  _avg?: UserProgressAvgAggregateInputType
+  _sum?: UserProgressSumAggregateInputType
   _min?: UserProgressMinAggregateInputType
   _max?: UserProgressMaxAggregateInputType
 }
@@ -165,9 +215,14 @@ export type UserProgressGroupByOutputType = {
   nodeId: string
   completed: boolean
   completedAt: Date | null
+  mastery: $Enums.MasteryLevel
+  confidence: number | null
+  lastEventAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserProgressCountAggregateOutputType | null
+  _avg: UserProgressAvgAggregateOutputType | null
+  _sum: UserProgressSumAggregateOutputType | null
   _min: UserProgressMinAggregateOutputType | null
   _max: UserProgressMaxAggregateOutputType | null
 }
@@ -196,6 +251,9 @@ export type UserProgressWhereInput = {
   nodeId?: Prisma.StringFilter<"UserProgress"> | string
   completed?: Prisma.BoolFilter<"UserProgress"> | boolean
   completedAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFilter<"UserProgress"> | $Enums.MasteryLevel
+  confidence?: Prisma.IntNullableFilter<"UserProgress"> | number | null
+  lastEventAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -207,6 +265,9 @@ export type UserProgressOrderByWithRelationInput = {
   nodeId?: Prisma.SortOrder
   completed?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  mastery?: Prisma.SortOrder
+  confidence?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastEventAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -222,6 +283,9 @@ export type UserProgressWhereUniqueInput = Prisma.AtLeast<{
   nodeId?: Prisma.StringFilter<"UserProgress"> | string
   completed?: Prisma.BoolFilter<"UserProgress"> | boolean
   completedAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFilter<"UserProgress"> | $Enums.MasteryLevel
+  confidence?: Prisma.IntNullableFilter<"UserProgress"> | number | null
+  lastEventAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -233,11 +297,16 @@ export type UserProgressOrderByWithAggregationInput = {
   nodeId?: Prisma.SortOrder
   completed?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  mastery?: Prisma.SortOrder
+  confidence?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastEventAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserProgressCountOrderByAggregateInput
+  _avg?: Prisma.UserProgressAvgOrderByAggregateInput
   _max?: Prisma.UserProgressMaxOrderByAggregateInput
   _min?: Prisma.UserProgressMinOrderByAggregateInput
+  _sum?: Prisma.UserProgressSumOrderByAggregateInput
 }
 
 export type UserProgressScalarWhereWithAggregatesInput = {
@@ -249,6 +318,9 @@ export type UserProgressScalarWhereWithAggregatesInput = {
   nodeId?: Prisma.StringWithAggregatesFilter<"UserProgress"> | string
   completed?: Prisma.BoolWithAggregatesFilter<"UserProgress"> | boolean
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProgress"> | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelWithAggregatesFilter<"UserProgress"> | $Enums.MasteryLevel
+  confidence?: Prisma.IntNullableWithAggregatesFilter<"UserProgress"> | number | null
+  lastEventAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
 }
@@ -258,6 +330,9 @@ export type UserProgressCreateInput = {
   nodeId: string
   completed?: boolean
   completedAt?: Date | string | null
+  mastery?: $Enums.MasteryLevel
+  confidence?: number | null
+  lastEventAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProgressInput
@@ -269,6 +344,9 @@ export type UserProgressUncheckedCreateInput = {
   nodeId: string
   completed?: boolean
   completedAt?: Date | string | null
+  mastery?: $Enums.MasteryLevel
+  confidence?: number | null
+  lastEventAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -278,6 +356,9 @@ export type UserProgressUpdateInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProgressNestedInput
@@ -289,6 +370,9 @@ export type UserProgressUncheckedUpdateInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -299,6 +383,9 @@ export type UserProgressCreateManyInput = {
   nodeId: string
   completed?: boolean
   completedAt?: Date | string | null
+  mastery?: $Enums.MasteryLevel
+  confidence?: number | null
+  lastEventAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -308,6 +395,9 @@ export type UserProgressUpdateManyMutationInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -318,6 +408,9 @@ export type UserProgressUncheckedUpdateManyInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -343,8 +436,15 @@ export type UserProgressCountOrderByAggregateInput = {
   nodeId?: Prisma.SortOrder
   completed?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  mastery?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
+  lastEventAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserProgressAvgOrderByAggregateInput = {
+  confidence?: Prisma.SortOrder
 }
 
 export type UserProgressMaxOrderByAggregateInput = {
@@ -353,6 +453,9 @@ export type UserProgressMaxOrderByAggregateInput = {
   nodeId?: Prisma.SortOrder
   completed?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  mastery?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
+  lastEventAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -363,8 +466,15 @@ export type UserProgressMinOrderByAggregateInput = {
   nodeId?: Prisma.SortOrder
   completed?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  mastery?: Prisma.SortOrder
+  confidence?: Prisma.SortOrder
+  lastEventAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserProgressSumOrderByAggregateInput = {
+  confidence?: Prisma.SortOrder
 }
 
 export type UserProgressCreateNestedManyWithoutUserInput = {
@@ -413,11 +523,26 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type EnumMasteryLevelFieldUpdateOperationsInput = {
+  set?: $Enums.MasteryLevel
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserProgressCreateWithoutUserInput = {
   id?: string
   nodeId: string
   completed?: boolean
   completedAt?: Date | string | null
+  mastery?: $Enums.MasteryLevel
+  confidence?: number | null
+  lastEventAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -427,6 +552,9 @@ export type UserProgressUncheckedCreateWithoutUserInput = {
   nodeId: string
   completed?: boolean
   completedAt?: Date | string | null
+  mastery?: $Enums.MasteryLevel
+  confidence?: number | null
+  lastEventAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -466,6 +594,9 @@ export type UserProgressScalarWhereInput = {
   nodeId?: Prisma.StringFilter<"UserProgress"> | string
   completed?: Prisma.BoolFilter<"UserProgress"> | boolean
   completedAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFilter<"UserProgress"> | $Enums.MasteryLevel
+  confidence?: Prisma.IntNullableFilter<"UserProgress"> | number | null
+  lastEventAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
 }
@@ -475,6 +606,9 @@ export type UserProgressCreateManyUserInput = {
   nodeId: string
   completed?: boolean
   completedAt?: Date | string | null
+  mastery?: $Enums.MasteryLevel
+  confidence?: number | null
+  lastEventAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -484,6 +618,9 @@ export type UserProgressUpdateWithoutUserInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -493,6 +630,9 @@ export type UserProgressUncheckedUpdateWithoutUserInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -502,6 +642,9 @@ export type UserProgressUncheckedUpdateManyWithoutUserInput = {
   nodeId?: Prisma.StringFieldUpdateOperationsInput | string
   completed?: Prisma.BoolFieldUpdateOperationsInput | boolean
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
+  confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -514,6 +657,9 @@ export type UserProgressSelect<ExtArgs extends runtime.Types.Extensions.Internal
   nodeId?: boolean
   completed?: boolean
   completedAt?: boolean
+  mastery?: boolean
+  confidence?: boolean
+  lastEventAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -525,6 +671,9 @@ export type UserProgressSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   nodeId?: boolean
   completed?: boolean
   completedAt?: boolean
+  mastery?: boolean
+  confidence?: boolean
+  lastEventAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -536,6 +685,9 @@ export type UserProgressSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   nodeId?: boolean
   completed?: boolean
   completedAt?: boolean
+  mastery?: boolean
+  confidence?: boolean
+  lastEventAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -547,11 +699,14 @@ export type UserProgressSelectScalar = {
   nodeId?: boolean
   completed?: boolean
   completedAt?: boolean
+  mastery?: boolean
+  confidence?: boolean
+  lastEventAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "nodeId" | "completed" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProgress"]>
+export type UserProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "nodeId" | "completed" | "completedAt" | "mastery" | "confidence" | "lastEventAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProgress"]>
 export type UserProgressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -573,6 +728,9 @@ export type $UserProgressPayload<ExtArgs extends runtime.Types.Extensions.Intern
     nodeId: string
     completed: boolean
     completedAt: Date | null
+    mastery: $Enums.MasteryLevel
+    confidence: number | null
+    lastEventAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userProgress"]>
@@ -1004,6 +1162,9 @@ export interface UserProgressFieldRefs {
   readonly nodeId: Prisma.FieldRef<"UserProgress", 'String'>
   readonly completed: Prisma.FieldRef<"UserProgress", 'Boolean'>
   readonly completedAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
+  readonly mastery: Prisma.FieldRef<"UserProgress", 'MasteryLevel'>
+  readonly confidence: Prisma.FieldRef<"UserProgress", 'Int'>
+  readonly lastEventAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
 }

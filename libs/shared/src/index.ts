@@ -138,16 +138,40 @@ export interface ChatSession {
 
 // ── Progress ──
 
+export type MasteryLevel = "UNSEEN" | "SEEN" | "PRACTICED" | "MASTERED";
+
+export type LearningEventType =
+  | "VIEW"
+  | "COMPLETE"
+  | "UNCOMPLETE"
+  | "QUIZ_CORRECT"
+  | "QUIZ_WRONG"
+  | "REVIEW"
+  | "MASTERY_CHANGE";
+
 export interface TopicProgress {
   total: number;
   completed: number;
-  nodes: Array<{ nodeId: string; completed: boolean }>;
+  nodes: Array<{
+    nodeId: string;
+    completed: boolean;
+    mastery: MasteryLevel;
+    confidence: number | null;
+  }>;
 }
 
 export interface ProgressSummaryItem {
   topicId: string;
   total: number;
   completed: number;
+}
+
+export interface LearningEvent {
+  id: string;
+  nodeId: string;
+  type: LearningEventType;
+  meta: Record<string, unknown> | null;
+  createdAt: string;
 }
 
 export interface ActivityDay {

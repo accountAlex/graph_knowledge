@@ -25,10 +25,11 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  chatSessions  ChatSession[]
-  progress      UserProgress[]
-  notes         NodeNote[]
-  quizAttempts  QuizAttempt[]
+  chatSessions   ChatSession[]
+  progress       UserProgress[]
+  notes          NodeNote[]
+  quizAttempts   QuizAttempt[]
+  learningEvents LearningEvent[]
 }
 
 model ChatSession {
@@ -201,13 +202,36 @@ model QuizAttempt {
   @@index([userId, questionId])
 }
 
+enum MasteryLevel {
+  UNSEEN
+  SEEN
+  PRACTICED
+  MASTERED
+}
+
+enum LearningEventType {
+  VIEW
+  COMPLETE
+  UNCOMPLETE
+  QUIZ_CORRECT
+  QUIZ_WRONG
+  REVIEW
+  MASTERY_CHANGE
+}
+
 model UserProgress {
   id        String   @id @default(uuid())
   userId    String
   nodeId    String
 
-  completed Boolean  @default(false)
+  // Binary flag kept for backward compatibility with existing UI.
+  completed   Boolean   @default(false)
   completedAt DateTime?
+
+  // Richer mastery layer (Block 0). `completed` stays in sync with MASTERED.
+  mastery     MasteryLevel @default(SEEN)
+  confidence  Int?         // 0-100, optional self/derived confidence
+  lastEventAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -216,5 +240,22 @@ model UserProgress {
 
   @@unique([userId, nodeId])
   @@index([userId])
+  @@index([userId, mastery])
+}
+
+model LearningEvent {
+  id        String            @id @default(uuid())
+  userId    String
+  nodeId    String
+  type      LearningEventType
+  meta      Json?
+
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, nodeId])
+  @@index([nodeId, type])
 }
 

@@ -11,6 +11,7 @@ import {
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { ProgressService } from "./progress.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { MasteryLevel } from "../generated/prisma/client";
 
 @ApiTags("Progress")
 @ApiBearerAuth()
@@ -57,5 +58,39 @@ export class ProgressController {
     @Body() body: { nodeIds: string[]; completed: boolean },
   ) {
     return this.progress.markNodes(req.user.id, body.nodeIds, body.completed);
+  }
+
+  /** Nodes that just became learnable (all prerequisites completed) */
+  @Get("unlocked")
+  getUnlocked(@Request() req: { user: { id: string } }) {
+    return this.progress.getUnlocked(req.user.id);
+  }
+
+  /** Recent learning events for the activity feed / weekly summary */
+  @Get("events")
+  getEvents(
+    @Request() req: { user: { id: string } },
+    @Query("limit") limit?: string,
+  ) {
+    return this.progress.getRecentEvents(req.user.id, limit ? Number(limit) : 50);
+  }
+
+  /** Record that the user viewed a node (UNSEEN → SEEN) */
+  @Post("view/:nodeId")
+  view(
+    @Request() req: { user: { id: string } },
+    @Param("nodeId") nodeId: string,
+  ) {
+    return this.progress.recordView(req.user.id, nodeId);
+  }
+
+  /** Set a finer-grained mastery level for a node */
+  @Post("mastery/:nodeId")
+  setMastery(
+    @Request() req: { user: { id: string } },
+    @Param("nodeId") nodeId: string,
+    @Body() body: { level: MasteryLevel; confidence?: number },
+  ) {
+    return this.progress.setMastery(req.user.id, nodeId, body.level, body.confidence);
   }
 }
