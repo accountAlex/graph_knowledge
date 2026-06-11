@@ -216,7 +216,7 @@ export function buildRoadmapGraph(params: {
               position: { x: groupStartX + ci * (CHILD_WIDTH + CHILD_X_GAP), y: childY },
               data: {
                 title: c.title,
-                role: c.role as any,
+                role: c.role,
                 parentTopicId: c.parentTopicId,
                 childCount: 0,
                 isExpanded: false,

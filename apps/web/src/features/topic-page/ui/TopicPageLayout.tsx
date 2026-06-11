@@ -53,15 +53,12 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     [payload.nodes, payload.topicId],
   );
 
-  const loadProgress = useCallback(async () => {
+  useEffect(() => {
     if (!isAuth || allNodeIds.length === 0) return;
-    try {
-      const p = await fetchTopicProgress(allNodeIds);
-      setProgress(p);
-    } catch { /* ignore */ }
+    fetchTopicProgress(allNodeIds)
+      .then(setProgress)
+      .catch(() => { /* ignore */ });
   }, [isAuth, allNodeIds]);
-
-  useEffect(() => { loadProgress(); }, [loadProgress]);
 
   const completedSet = useMemo(() => {
     if (!progress) return new Set<string>();
@@ -89,10 +86,28 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     return buildGraphModel({ payload, mode, selectedNodeId });
   }, [payload, mode, selectedNodeId]);
 
+  const onSelect = useCallback((id: string) => {
+    setSelectedNodeId(id);
+
+    const node = payload.nodes.find((n) => n.id === id);
+    if (node?.role === "TOPIC" && node.id !== payload.topicId) {
+      const q = new URLSearchParams();
+      q.set("track", payload.track);
+      q.set("depth", String(payload.depth));
+      router.push(`/topic/${encodeURIComponent(node.id)}?${q.toString()}`);
+      return;
+    }
+
+    // Auto-open details panel when clicking any non-topic node
+    if (node && node.id !== payload.topicId) {
+      setPanelOpen(true);
+    }
+  }, [payload, router]);
+
   const handleKeySelectNode = useCallback((id: string | null) => {
     if (id) onSelect(id);
     else { setSelectedNodeId(null); setPanelOpen(false); }
-  }, []);
+  }, [onSelect]);
 
   const handleKeyDepthChange = useCallback((delta: number) => {
     const next = Math.max(0, Math.min(4, payload.depth + delta));
@@ -110,24 +125,6 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     if (!selectedNodeId) return null;
     return payload.nodes.find((n) => n.id === selectedNodeId) ?? null;
   }, [payload.nodes, selectedNodeId]);
-
-  const onSelect = (id: string) => {
-    setSelectedNodeId(id);
-
-    const node = payload.nodes.find((n) => n.id === id);
-    if (node?.role === "TOPIC" && node.id !== payload.topicId) {
-      const q = new URLSearchParams();
-      q.set("track", payload.track);
-      q.set("depth", String(payload.depth));
-      router.push(`/topic/${encodeURIComponent(node.id)}?${q.toString()}`);
-      return;
-    }
-
-    // Auto-open details panel when clicking any non-topic node
-    if (node && node.id !== payload.topicId) {
-      setPanelOpen(true);
-    }
-  };
 
   const roleColor = (role: string) => `var(--role-${role.toLowerCase()})`;
   const roleBg = (role: string) => `var(--role-${role.toLowerCase()}-bg)`;

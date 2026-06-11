@@ -19,11 +19,11 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const AVATAR_COLORS = [
-  "linear-gradient(135deg, #6366f1, #8b5cf6)",
-  "linear-gradient(135deg, #0ea5e9, #6366f1)",
+  "linear-gradient(135deg, #2f6fff, #5b8cff)",
+  "linear-gradient(135deg, #0ea5e9, #2f6fff)",
   "linear-gradient(135deg, #10b981, #0ea5e9)",
   "linear-gradient(135deg, #f59e0b, #ef4444)",
-  "linear-gradient(135deg, #ec4899, #f43f5e)",
+  "linear-gradient(135deg, #8b5cf6, #6366f1)",
   "linear-gradient(135deg, #14b8a6, #10b981)",
 ];
 
@@ -257,7 +257,7 @@ export default function ProfilePage() {
                     key={i}
                     onClick={() => handleAvatarColor(i)}
                     className="w-2.5 h-2.5 rounded-full transition-transform hover:scale-125"
-                    style={{ background: c.match(/#[\da-f]{6}/i)?.[1] ?? "#6366f1", outline: i === avatarColorIdx ? "2px solid var(--accent)" : "none", outlineOffset: 1 }}
+                    style={{ background: c.match(/#[\da-f]{6}/i)?.[0] ?? "#2f6fff", outline: i === avatarColorIdx ? "2px solid var(--accent)" : "none", outlineOffset: 1 }}
                   />
                 ))}
               </div>
@@ -284,7 +284,7 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <>
-                    <span className="text-lg font-bold">{user.name || "Без имени"}</span>
+                    <span className="font-display text-lg" style={{ fontWeight: 700 }}>{user.name || "Без имени"}</span>
                     <button
                       onClick={() => { setNameValue(user.name ?? ""); setEditingName(true); }}
                       className="text-[11px] px-2 py-0.5 rounded-lg transition-colors hover:bg-[var(--bg-card)]"

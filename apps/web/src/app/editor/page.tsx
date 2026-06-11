@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/AuthProvider";
-import type { KgNodeDetail, TopicNodeRole, EdgeKind } from "@mathgraph/shared";
+import type { KgNodeDetail, TopicNodeRole, EdgeKind, CreateNodeDto, CreateEdgeDto } from "@mathgraph/shared";
 import {
   listNodes,
   createNode,
@@ -11,9 +11,8 @@ import {
   deleteNode,
   updateNodeStatus,
   createEdge,
-  deleteEdge,
 } from "@/lib/knowledgeApi";
-import { fetchNodeVersions, revertNodeToVersion, type NodeVersion, type VersionList } from "@/lib/versioningApi";
+import { fetchNodeVersions, revertNodeToVersion, type VersionList } from "@/lib/versioningApi";
 import { exportGraph, importGraph, type ImportResult } from "@/lib/importExportApi";
 import { LaTeXModal } from "@/features/editor/ui/LaTeXModal";
 
@@ -323,7 +322,7 @@ export default function EditorPage() {
             if (modal.kind === "edit") {
               await updateNode(modal.node.id, dto);
             } else {
-              await createNode(dto as any);
+              await createNode(dto);
             }
             load();
             setModal({ kind: "closed" });
@@ -383,7 +382,7 @@ function NodeModal({
 }: {
   initial?: KgNodeDetail;
   onClose: () => void;
-  onSave: (data: any) => Promise<void>;
+  onSave: (data: CreateNodeDto) => Promise<void>;
   nodes: KgNodeDetail[];
 }) {
   const [title, setTitle] = useState(initial?.title ?? "");
@@ -426,7 +425,7 @@ function NodeModal({
     setSaving(true);
     setError("");
     try {
-      const dto: any = {
+      const dto: CreateNodeDto = {
         title: title.trim(),
         role,
         description: description.trim() || undefined,
@@ -438,8 +437,8 @@ function NodeModal({
         dto.parentTopicId = parentTopicId;
       }
       await onSave(dto);
-    } catch (e: any) {
-      setError(e.message ?? "Ошибка");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка");
     } finally {
       setSaving(false);
     }
@@ -629,7 +628,7 @@ function ImportModal({
         </div>
 
         <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>
-          Загрузите JSON-файл в формате экспорта MathGraph (поля <code>nodes</code> и <code>edges</code>).
+          Загрузите JSON-файл в формате экспорта MathWin (поля <code>nodes</code> и <code>edges</code>).
         </p>
 
         {error && (
@@ -795,7 +794,7 @@ function VersionHistoryModal({
                   </div>
                   <div className="flex items-center gap-3 text-[10px]" style={{ color: "var(--text-muted)" }}>
                     <span>{new Date(v.createdAt).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
-                    {v.changeNote && <span className="italic">"{v.changeNote}"</span>}
+                    {v.changeNote && <span className="italic">&laquo;{v.changeNote}&raquo;</span>}
                   </div>
                   {v.description && (
                     <div className="text-[10px] mt-1 truncate" style={{ color: "var(--text-muted)" }}>
@@ -831,7 +830,7 @@ function EdgeModal({
 }: {
   nodes: KgNodeDetail[];
   onClose: () => void;
-  onSave: (dto: any) => Promise<void>;
+  onSave: (dto: CreateEdgeDto) => Promise<void>;
 }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -845,8 +844,8 @@ function EdgeModal({
     setError("");
     try {
       await onSave({ from, to, type });
-    } catch (e: any) {
-      setError(e.message ?? "Ошибка");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка");
       setSaving(false);
       return;
     }

@@ -55,6 +55,8 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
     }, 280);
 
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    // onQueryChange is a stable parent setter; re-run only on query change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
   useEffect(() => {
@@ -115,8 +117,10 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
           onChange={(e) => setQ(e.target.value)}
           onFocus={() => results.length > 0 && setOpen(true)}
           onKeyDown={handleKeyDown}
+          role="combobox"
           aria-autocomplete="list"
           aria-expanded={open}
+          aria-controls="global-search-listbox"
         />
         <AnimatePresence>
           {q && (
@@ -139,6 +143,8 @@ export function GlobalSearch({ onQueryChange, placeholder = "Поиск по г�
       <AnimatePresence>
         {open && results.length > 0 && (
           <motion.div
+            id="global-search-listbox"
+            role="listbox"
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}

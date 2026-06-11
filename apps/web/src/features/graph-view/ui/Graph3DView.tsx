@@ -42,6 +42,12 @@ function defaultSphereR(nodeVal: number) {
 const LOD_TITLE_DIST = 1800;
 const LOD_BADGE_DIST = 2800;
 
+/** Minimal shape of the OrbitControls object exposed by 3d-force-graph */
+type OrbitLike = {
+  addEventListener(type: string, handler: () => void): void;
+  removeEventListener(type: string, handler: () => void): void;
+};
+
 export interface Graph3DNode {
   id: string;
   title: string;
@@ -76,7 +82,7 @@ export function Graph3DView({ nodes, edges, onSelectNode }: Props) {
 
     let mounted = true;
     const nodeObjects = new Map<string, Group>();
-    let orbitControls: any = null;
+    let orbitControls: OrbitLike | null = null;
     let lodHandler: (() => void) | null = null;
 
     import("3d-force-graph").then(({ default: ForceGraph3D }) => {
@@ -85,12 +91,13 @@ export function Graph3DView({ nodes, edges, onSelectNode }: Props) {
       const graph = new ForceGraph3D(containerRef.current)
         .backgroundColor("rgba(0,0,0,0)")
         .nodeId("id")
-        .nodeColor((n: any) => ROLE_COLOR_HEX[n.role] || "#a78bfa")
-        .nodeVal((n: any) => ROLE_SIZES[n.role] || 4)
+        .nodeColor((n) => ROLE_COLOR_HEX[(n as unknown as Graph3DNode).role] || "#a78bfa")
+        .nodeVal((n) => ROLE_SIZES[(n as unknown as Graph3DNode).role] || 4)
         .nodeOpacity(1)
         // extend(true): library keeps its default sphere; we add glow + labels on top
         .nodeThreeObjectExtend(true)
-        .nodeThreeObject((node: any) => {
+        .nodeThreeObject((nodeObj) => {
+          const node = nodeObj as unknown as Graph3DNode;
           const color = ROLE_COLOR_HEX[node.role] || "#a78bfa";
           const size = ROLE_SIZES[node.role] || 4;
           const isTopic = node.role === "TOPIC";
@@ -109,7 +116,7 @@ export function Graph3DView({ nodes, edges, onSelectNode }: Props) {
               depthWrite: false,
             }),
           );
-          (glowMesh as any).raycast = () => {};
+          (glowMesh as unknown as { raycast: () => void }).raycast = () => {};
           group.add(glowMesh);
 
           // Title label
@@ -145,13 +152,13 @@ export function Graph3DView({ nodes, edges, onSelectNode }: Props) {
         })
         .linkSource("from")
         .linkTarget("to")
-        .linkColor((e: any) =>
-          e.kind === "CONTAINS"
+        .linkColor((e) =>
+          (e as unknown as Graph3DEdge).kind === "CONTAINS"
             ? "rgba(192,132,252,0.55)"   // soft violet — hierarchy
             : "rgba(250,204,21,0.9)",     // vivid gold  — prerequisites
         )
-        .linkWidth((e: any) => (e.kind === "CONTAINS" ? 1.2 : 2))
-        .linkDirectionalParticles((e: any) => (e.kind === "PREREQ_REQUIRED" ? 3 : 0))
+        .linkWidth((e) => ((e as unknown as Graph3DEdge).kind === "CONTAINS" ? 1.2 : 2))
+        .linkDirectionalParticles((e) => ((e as unknown as Graph3DEdge).kind === "PREREQ_REQUIRED" ? 3 : 0))
         .linkDirectionalParticleWidth(2.5)
         .linkDirectionalParticleColor(() => "#facc15")
         .linkDirectionalParticleSpeed(0.005)
@@ -165,7 +172,7 @@ export function Graph3DView({ nodes, edges, onSelectNode }: Props) {
       });
 
       graph.d3Force("charge")?.strength(-180);
-      graph.d3Force("link")?.distance((e: any) =>
+      graph.d3Force("link")?.distance((e: Graph3DEdge) =>
         e.kind === "CONTAINS" ? 70 : 130,
       );
 
@@ -181,7 +188,7 @@ export function Graph3DView({ nodes, edges, onSelectNode }: Props) {
           if (badge) badge.visible = showBadge;
         }
       };
-      orbitControls = graph.controls() as any;
+      orbitControls = graph.controls() as unknown as OrbitLike;
       orbitControls?.addEventListener("change", lodHandler);
 
       graphRef.current = graph;

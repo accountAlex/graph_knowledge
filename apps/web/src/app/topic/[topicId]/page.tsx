@@ -45,10 +45,9 @@ export default function TopicPage() {
   useEffect(() => {
     if (!topicId) return;
     const ac = new AbortController();
-    setErr(null);
 
     fetchTopicPage({ topicId, track, depth, signal: ac.signal })
-      .then(setPayload)
+      .then((p) => { setErr(null); setPayload(p); })
       .catch((e) => {
         if (e instanceof DOMException && e.name === "AbortError") return;
         if (e?.message?.includes("aborted")) return;
@@ -112,7 +111,7 @@ export default function TopicPage() {
               {topicTitle && (
                 <>
                   <span style={{ color: "var(--text-muted)" }}>/</span>
-                  <span className="font-semibold truncate" style={{ color: "var(--text-primary)" }}>
+                  <span className="font-display truncate" style={{ fontWeight: 600, color: "var(--text-primary)" }}>
                     {topicTitle}
                   </span>
                 </>

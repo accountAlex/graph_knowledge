@@ -23,11 +23,10 @@ export function useAnimatedNodes<T extends Record<string, unknown>>(
     const prevMap = prevNodesRef.current;
     const targetMap = new Map(targetNodes.map((n) => [n.id, n]));
 
-    // First render — no animation
+    // First render — no animation. State is already initialized to the
+    // initial target nodes/edges, so we only need to seed the ref.
     if (prevMap.size === 0) {
       prevNodesRef.current = targetMap;
-      setDisplayNodes(targetNodes);
-      setDisplayEdges(targetEdges);
       return;
     }
 
@@ -72,10 +71,14 @@ export function useAnimatedNodes<T extends Record<string, unknown>>(
       }
     }
 
+    // Imperative animation: seed the transition state synchronously the moment
+    // the graph changes, then advance it via rAF/timeout below.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setIsAnimating(true);
     setDisplayNodes(merged);
     // Edges: only show edges between target nodes (skip exiting)
     setDisplayEdges(targetEdges);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     // After a tick, move entering nodes to their target positions
     requestAnimationFrame(() => {

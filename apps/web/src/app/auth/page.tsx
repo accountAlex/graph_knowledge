@@ -46,16 +46,20 @@ export default function AuthPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3 group">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base shadow-lg"
-              style={{
-                background: "linear-gradient(135deg, var(--accent), var(--accent-hover))",
-                color: "#fff",
-              }}
+            <span
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+              style={{ background: "linear-gradient(140deg, #2f6fff, #1f4fd6)" }}
             >
-              M
-            </div>
-            <span className="font-bold text-xl tracking-tight">MathGraph</span>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M6 17L12 6L18 14" stroke="rgba(255,255,255,0.55)" strokeWidth="1.4" strokeLinecap="round" />
+                <circle cx="6" cy="17" r="2.4" fill="#fff" />
+                <circle cx="12" cy="6" r="2.4" fill="#fff" />
+                <circle cx="18" cy="14" r="2.4" fill="#fff" />
+              </svg>
+            </span>
+            <span className="font-display text-xl tracking-tight" style={{ fontWeight: 700 }}>
+              Math<span style={{ color: "#5b8cff" }}>Win</span>
+            </span>
           </Link>
         </div>
 

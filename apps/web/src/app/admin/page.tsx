@@ -88,7 +88,7 @@ export default function AdminPage() {
               >
                 M
               </div>
-              <span className="font-bold text-base">MathGraph</span>
+              <span className="font-display text-base" style={{ fontWeight: 700 }}>Math<span style={{ color: "#5b8cff" }}>Win</span></span>
             </Link>
             <span className="text-xs font-medium px-2 py-1 rounded-md" style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b" }}>
               Админ-панель

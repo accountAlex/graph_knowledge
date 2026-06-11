@@ -54,11 +54,10 @@ export function RoadmapView() {
 
   useEffect(() => {
     const ac = new AbortController();
-    setLoading(true);
-    setErr(null);
 
     fetchRoadmap({ track, depth, signal: ac.signal })
       .then((data) => {
+        setErr(null);
         setPayload(data);
         if (depth > 0) {
           const topicIds = data.nodes
@@ -148,7 +147,7 @@ export function RoadmapView() {
               >
                 M
               </div>
-              <span className="font-bold text-base sm:text-lg tracking-tight">MathGraph</span>
+              <span className="font-display text-base sm:text-lg tracking-tight" style={{ fontWeight: 700 }}>Math<span style={{ color: "#5b8cff" }}>Win</span></span>
             </Link>
             <span className="badge badge-accent hidden sm:inline-flex">Roadmap</span>
           </div>

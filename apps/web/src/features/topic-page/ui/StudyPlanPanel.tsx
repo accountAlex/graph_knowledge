@@ -5,19 +5,15 @@ import Link from "next/link";
 import type { StudyPlanItem } from "@mathgraph/shared";
 
 export function StudyPlanPanel({ goalTopicId }: { goalTopicId: string }) {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const [plan, setPlan] = useState<StudyPlanItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(!!baseUrl);
+  const [error, setError] = useState<string | null>(baseUrl ? null : "NEXT_PUBLIC_API_URL is not set");
 
   useEffect(() => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    if (!baseUrl) {
-      setError("NEXT_PUBLIC_API_URL is not set");
-      return;
-    }
+    if (!baseUrl) return;
 
     const ac = new AbortController();
-    setLoading(true);
     fetch(`${baseUrl}/study-plan?goalTopicId=${goalTopicId}&maxDepth=5`, { signal: ac.signal })
       .then((res) => res.json())
       .then(setPlan)
@@ -29,7 +25,7 @@ export function StudyPlanPanel({ goalTopicId }: { goalTopicId: string }) {
       .finally(() => setLoading(false));
 
     return () => ac.abort();
-  }, [goalTopicId]);
+  }, [goalTopicId, baseUrl]);
 
   return (
     <div className="glass-card p-4 !transform-none">

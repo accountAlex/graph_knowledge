@@ -87,8 +87,8 @@ export default function AutoLinkPage() {
     try {
       const data = await fetchSuggestions();
       setSuggestions(data);
-    } catch (e: any) {
-      setError(e.message ?? "Ошибка");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Ошибка");
     } finally {
       setFetching(false);
     }

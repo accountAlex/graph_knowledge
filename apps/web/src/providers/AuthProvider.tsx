@@ -52,6 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const refreshToken = localStorage.getItem("mg-refresh");
 
     if (!accessToken) {
+      // Session restore is inherently client-only (reads localStorage on mount).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }

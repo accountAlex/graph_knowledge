@@ -28,6 +28,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("mg-theme") as Theme | null;
     if (saved && THEME_LIST.some((t) => t.id === saved)) {
+      // Hydration-safe: render the default theme on the server, then apply the
+      // persisted choice after mount to avoid a markup mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setThemeState(saved);
     }
   }, []);
