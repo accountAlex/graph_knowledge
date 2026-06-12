@@ -1,9 +1,14 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { ProgressService } from "../progress/progress.service";
+import type { MasteryLevel } from "../generated/prisma/client";
 
 @Injectable()
 export class QuizService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private progress: ProgressService,
+  ) {}
 
   async listQuestions(nodeId: string) {
     return this.prisma.nodeQuestion.findMany({
@@ -92,5 +97,119 @@ export class QuizService {
   async deleteQuestion(id: string) {
     await this.prisma.nodeQuestion.delete({ where: { id } });
     return { deleted: true };
+  }
+
+  // ──────────── Diagnostic (Block 1b) ────────────
+
+  /**
+   * Build a diagnostic for a topic: a breadth-first spread of questions across
+   * the topic's child nodes (one per node first, then fill up to `limit`).
+   * Answers/explanations are withheld until submission.
+   */
+  async getDiagnostic(topicId: string, limit = 10) {
+    const view = await this.prisma.topicView.findUnique({
+      where: { topicId },
+      include: { slots: { select: { orderedNodeIds: true } } },
+    });
+    const nodeIds = view ? [...new Set(view.slots.flatMap((s) => s.orderedNodeIds))] : [];
+    if (nodeIds.length === 0) return [];
+
+    const questions = await this.prisma.nodeQuestion.findMany({
+      where: { nodeId: { in: nodeIds } },
+      select: { id: true, type: true, question: true, options: true, nodeId: true },
+    });
+    if (questions.length === 0) return [];
+
+    type Q = (typeof questions)[number];
+    const shuffle = <T>(arr: T[]): T[] => {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+
+    const byNode = new Map<string, Q[]>();
+    for (const q of questions) {
+      const arr = byNode.get(q.nodeId) ?? [];
+      arr.push(q);
+      byNode.set(q.nodeId, arr);
+    }
+
+    // Round-robin one question per node (shuffled), filling up to limit
+    const pools = shuffle([...byNode.values()].map((arr) => shuffle(arr)));
+    const picked: Q[] = [];
+    let added = true;
+    while (added && picked.length < limit) {
+      added = false;
+      for (const pool of pools) {
+        if (picked.length >= limit) break;
+        const q = pool.shift();
+        if (q) {
+          picked.push(q);
+          added = true;
+        }
+      }
+    }
+    return picked;
+  }
+
+  /**
+   * Grade a batch of diagnostic answers, record attempts, and derive a mastery
+   * level per node (all correct → MASTERED, some → PRACTICED, none → SEEN).
+   */
+  async submitDiagnostic(
+    userId: string,
+    answers: { questionId: string; answer: string }[],
+  ) {
+    const ids = answers.map((a) => a.questionId);
+    const questions = await this.prisma.nodeQuestion.findMany({
+      where: { id: { in: ids } },
+    });
+    const qById = new Map(questions.map((q) => [q.id, q]));
+
+    const results: {
+      questionId: string;
+      nodeId: string;
+      correct: boolean;
+      correctAnswer: string;
+      explanation: string | null;
+    }[] = [];
+    const perNode = new Map<string, { total: number; correct: number }>();
+
+    for (const a of answers) {
+      const q = qById.get(a.questionId);
+      if (!q) continue;
+      const correct = q.answer.trim().toLowerCase() === a.answer.trim().toLowerCase();
+      await this.prisma.quizAttempt.create({
+        data: { userId, questionId: q.id, answer: a.answer, correct },
+      });
+      results.push({
+        questionId: q.id,
+        nodeId: q.nodeId,
+        correct,
+        correctAnswer: q.answer,
+        explanation: q.explanation ?? null,
+      });
+      const agg = perNode.get(q.nodeId) ?? { total: 0, correct: 0 };
+      agg.total += 1;
+      if (correct) agg.correct += 1;
+      perNode.set(q.nodeId, agg);
+    }
+
+    const byNode: { nodeId: string; total: number; correct: number; mastery: MasteryLevel }[] = [];
+    for (const [nodeId, agg] of perNode) {
+      const mastery: MasteryLevel =
+        agg.correct === agg.total ? "MASTERED" : agg.correct > 0 ? "PRACTICED" : "SEEN";
+      await this.progress.setMastery(userId, nodeId, mastery);
+      byNode.push({ nodeId, total: agg.total, correct: agg.correct, mastery });
+    }
+
+    return {
+      results,
+      byNode,
+      score: { correct: results.filter((r) => r.correct).length, total: results.length },
+    };
   }
 }

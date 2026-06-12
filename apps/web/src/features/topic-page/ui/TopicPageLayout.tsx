@@ -16,6 +16,7 @@ import { MobileGraphList } from "@/features/graph-view/ui/MobileGraphList";
 import { MarkdownContent } from "@/features/graph-view/ui/MarkdownContent";
 import { NodeNoteEditor } from "@/features/notes/ui/NodeNoteEditor";
 import { NodeQuizPanel } from "@/features/quiz/ui/NodeQuizPanel";
+import { DiagnosticModal } from "@/features/quiz/ui/DiagnosticModal";
 import { VideoEmbed, isVideoUrl } from "@/features/graph-view/ui/VideoEmbed";
 import { useMobileDetect } from "@/hooks/useMobileDetect";
 import { useSwipeDown } from "@/hooks/useSwipeDown";
@@ -46,6 +47,7 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
   const [progress, setProgress] = useState<TopicProgress | null>(null);
   const [heatmap, setHeatmap] = useState(false);
   const [unlockedSet, setUnlockedSet] = useState<Set<string>>(new Set());
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   useSwipeDown(panelRef, () => setPanelOpen(false));
 
@@ -79,6 +81,23 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     fetchUnlocked()
       .then((ids) => setUnlockedSet(new Set(ids.filter((id) => topicSet.has(id)))))
       .catch(() => { /* ignore */ });
+  }, [isAuth, allNodeIds]);
+
+  const nodeTitleById = useMemo(
+    () => new Map(payload.nodes.map((n) => [n.id, n.title])),
+    [payload.nodes],
+  );
+
+  // After a diagnostic: pull fresh mastery + unlocked and switch on the heatmap
+  const handleDiagnosticComplete = useCallback(() => {
+    if (isAuth && allNodeIds.length > 0) {
+      const topicSet = new Set(allNodeIds);
+      fetchTopicProgress(allNodeIds).then(setProgress).catch(() => {});
+      fetchUnlocked()
+        .then((ids) => setUnlockedSet(new Set(ids.filter((id) => topicSet.has(id)))))
+        .catch(() => {});
+    }
+    setHeatmap(true);
   }, [isAuth, allNodeIds]);
 
   const handleToggle = useCallback(async (nodeId: string) => {
@@ -244,6 +263,19 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
             >
               <span style={{ fontSize: 13 }}>◍</span>
               <span className="hidden sm:inline">Карта прогресса</span>
+            </button>
+          )}
+
+          {/* Diagnostic */}
+          {isAuth && (
+            <button
+              onClick={() => setShowDiagnostic(true)}
+              className="glass-card !rounded-xl px-3 py-2 flex items-center gap-2 !transform-none text-xs font-medium"
+              style={{ color: "var(--accent)" }}
+              title="Пройти диагностику и найти пробелы"
+            >
+              <span style={{ fontSize: 13 }}>✓</span>
+              <span className="hidden sm:inline">Диагностика</span>
             </button>
           )}
         </motion.div>
@@ -648,6 +680,19 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
 
       {/* ── Keyboard shortcuts help ── */}
       {showHelp && <KeyboardShortcutsHelp onClose={() => setShowHelp(false)} />}
+
+      {/* ── Diagnostic modal ── */}
+      <AnimatePresence>
+        {showDiagnostic && (
+          <DiagnosticModal
+            topicId={payload.topicId}
+            topicTitle={payload.nodes.find((n) => n.id === payload.topicId)?.title ?? "Тема"}
+            nodeTitleById={nodeTitleById}
+            onClose={() => setShowDiagnostic(false)}
+            onComplete={handleDiagnosticComplete}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

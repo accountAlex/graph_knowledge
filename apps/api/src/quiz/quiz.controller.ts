@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Request,
   UseGuards,
 } from "@nestjs/common";
@@ -16,6 +17,26 @@ import { QuizService } from "./quiz.service";
 @Controller("quiz")
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
+
+  /** Build a topic diagnostic — spread of questions, no answers (static route first) */
+  @Get("diagnostic")
+  getDiagnostic(
+    @Query("topicId") topicId: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.quizService.getDiagnostic(topicId, limit ? Number(limit) : 10);
+  }
+
+  /** Submit a completed diagnostic — grades answers and updates mastery */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post("diagnostic/submit")
+  submitDiagnostic(
+    @Body() body: { answers: { questionId: string; answer: string }[] },
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.quizService.submitDiagnostic(req.user.id, body.answers ?? []);
+  }
 
   /** List questions for a node (no answers/explanations) */
   @Get(":nodeId")
