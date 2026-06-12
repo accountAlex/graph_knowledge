@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -8,6 +8,7 @@ import ReactFlow, {
   type Edge,
   type Node,
   type NodeTypes,
+  type ReactFlowInstance,
   Handle,
   Position,
   MarkerType,
@@ -34,6 +35,8 @@ export type KgNodeData = {
   isUnlocked?: boolean;   // all prerequisites done → newly learnable
   isGap?: boolean;        // missing prerequisite for the selected node
   heatmap?: boolean;      // heatmap mode active
+  hoverDim?: boolean;     // dimmed because not in the hovered node's chain
+  hoverChain?: boolean;   // part of the hovered node's prerequisite chain
 };
 
 const MASTERY_STYLE: Record<MasteryLevel, { color: string; label: string }> = {
@@ -53,6 +56,7 @@ type Props = {
   edges: Edge[];
   selectedNodeId?: string | null;
   onSelectNodeId?: (id: string) => void;
+  prereqEdges?: { from: string; to: string }[];
 };
 
 const PREREQ_COLOR = "#f59e0b";
@@ -112,9 +116,9 @@ function KgNode({ data }: { data: KgNodeData }) {
         background: bgStyle,
         border: borderStyle,
         color: "var(--text-primary)",
-        opacity: data.isDimmed ? 0.12 : 1,
+        opacity: data.isDimmed || data.hoverDim ? 0.12 : 1,
         width: data.width,
-        boxShadow: shadowStyle,
+        boxShadow: data.hoverChain ? `${shadowStyle}, 0 0 0 2px var(--accent)` : shadowStyle,
         transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
       className={`rounded-2xl px-4 py-3.5 text-center cursor-pointer hover:border-[var(--accent)] hover:-translate-y-1 hover:shadow-lg relative ${isUnlocked ? "animate-pulse-glow" : ""}`}
@@ -227,41 +231,81 @@ function RowLabelNode({ data }: { data: RowLabelData }) {
 
 const nodeTypes: NodeTypes = { kgNode: KgNode, rowLabel: RowLabelNode };
 
-export function GraphView({ nodes: rawNodes, edges: rawEdges, selectedNodeId, onSelectNodeId }: Props) {
+export function GraphView({ nodes: rawNodes, edges: rawEdges, selectedNodeId, onSelectNodeId, prereqEdges }: Props) {
   const { nodes, edges } = useAnimatedNodes(rawNodes as Node<KgNodeData>[], rawEdges);
 
   // Stable reference — prevents React Flow HMR warning in dev
   const stableNodeTypes = useMemo(() => nodeTypes, []);
 
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const rfRef = useRef<ReactFlowInstance | null>(null);
+
+  // Prerequisite chain of the hovered node: itself + all PREREQ ancestors
+  const chainSet = useMemo(() => {
+    if (!hoveredId || !prereqEdges || prereqEdges.length === 0) return null;
+    const set = new Set<string>([hoveredId]);
+    const queue = [hoveredId];
+    while (queue.length) {
+      const cur = queue.shift()!;
+      for (const e of prereqEdges) {
+        if (e.to === cur && !set.has(e.from)) { set.add(e.from); queue.push(e.from); }
+      }
+    }
+    return set.size > 1 ? set : null; // only engage when there is an actual chain
+  }, [hoveredId, prereqEdges]);
+
+  const displayNodes = useMemo(() => {
+    if (!chainSet) return nodes;
+    return nodes.map((n) => {
+      if (n.type === "rowLabel") return n;
+      const inChain = chainSet.has(n.id);
+      return { ...n, data: { ...(n.data as KgNodeData), hoverDim: !inChain, hoverChain: inChain } };
+    });
+  }, [nodes, chainSet]);
+
   const styledEdges = useMemo<Edge[]>(() => {
     return edges.map((e) => {
       const isActive = selectedNodeId === e.source || selectedNodeId === e.target;
+      const inChain = chainSet ? chainSet.has(e.source) && chainSet.has(e.target) : false;
+      const dimmed = !!chainSet && !inChain;
+      const highlight = isActive || inChain;
+      const color = dimmed ? "var(--border)" : highlight ? "var(--accent)" : "var(--border)";
       return {
         ...e,
-        animated: selectedNodeId === e.source,
+        animated: selectedNodeId === e.source || inChain,
         style: {
-          stroke: isActive ? "var(--accent)" : "var(--border)",
-          strokeWidth: isActive ? 2 : 1.2,
-          opacity: isActive ? 0.9 : 0.4,
+          stroke: color,
+          strokeWidth: highlight ? 2 : 1.2,
+          opacity: dimmed ? 0.06 : highlight ? 0.9 : 0.4,
           transition: "all 0.3s ease",
         },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: isActive ? "var(--accent)" : "var(--border)",
-          width: 14,
-          height: 14,
-        },
+        markerEnd: { type: MarkerType.ArrowClosed, color, width: 14, height: 14 },
       };
     });
-  }, [edges, selectedNodeId]);
+  }, [edges, selectedNodeId, chainSet]);
+
+  // Smoothly fly the camera to the selected node
+  useEffect(() => {
+    if (!selectedNodeId || !rfRef.current) return;
+    const node = (rawNodes as Node<KgNodeData>[]).find((n) => n.id === selectedNodeId);
+    if (!node || node.type === "rowLabel") return;
+    const w = node.data?.width ?? 220;
+    rfRef.current.setCenter(node.position.x + w / 2, node.position.y + 65, {
+      zoom: rfRef.current.getZoom(),
+      duration: 600,
+    });
+  }, [selectedNodeId, rawNodes]);
 
   return (
     <div className="h-full w-full">
       <ReactFlow
-        nodes={nodes}
+        nodes={displayNodes}
         edges={styledEdges}
         nodeTypes={stableNodeTypes}
+        onInit={(inst) => { rfRef.current = inst; }}
         onNodeClick={(_, n) => onSelectNodeId?.(n.id)}
+        onNodeMouseEnter={(_, n) => { if (n.type !== "rowLabel") setHoveredId(n.id); }}
+        onNodeMouseLeave={() => setHoveredId(null)}
         fitView
         fitViewOptions={{ padding: 0.3 }}
         proOptions={{ hideAttribution: true }}

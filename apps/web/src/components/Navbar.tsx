@@ -228,6 +228,16 @@ export function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2.5 shrink-0">
+            <button
+              onClick={() => window.dispatchEvent(new Event("mathwin:palette"))}
+              className="hidden md:flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs"
+              style={{ color: textMuted, border: `1px solid ${onHero ? "rgba(160,190,240,0.25)" : "var(--border)"}` }}
+              title="Поиск и команды (⌘K)"
+            >
+              <span style={{ fontSize: 12 }}>⌕</span>
+              <kbd style={{ fontSize: 10, opacity: 0.85 }}>⌘K</kbd>
+            </button>
+
             <motion.button
               onClick={toggle}
               whileHover={{ scale: 1.1 }}

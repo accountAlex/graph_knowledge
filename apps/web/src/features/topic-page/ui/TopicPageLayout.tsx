@@ -122,6 +122,11 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     } catch { /* ignore */ }
   }, [isAuth, allNodeIds]);
 
+  const prereqEdges = useMemo(
+    () => payload.edges.filter((e) => e.kind === "PREREQ_REQUIRED").map((e) => ({ from: e.from, to: e.to })),
+    [payload.edges],
+  );
+
   // Gaps = prerequisite ancestors of the selected node that aren't completed yet
   const gapSet = useMemo(() => {
     if (!selectedNodeId) return new Set<string>();
@@ -372,6 +377,7 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
             edges={graph.edges}
             selectedNodeId={selectedNodeId}
             onSelectNodeId={onSelect}
+            prereqEdges={prereqEdges}
           />
         )}
       </div>
