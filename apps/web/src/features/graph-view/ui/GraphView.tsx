@@ -5,7 +5,11 @@ import ReactFlow, {
   Background,
   Controls,
   MiniMap,
+  BaseEdge,
+  getSmoothStepPath,
   type Edge,
+  type EdgeProps,
+  type EdgeTypes,
   type Node,
   type NodeTypes,
   type ReactFlowInstance,
@@ -142,8 +146,14 @@ function KgNode({ data }: { data: KgNodeData }) {
       {(data.completed || mastery !== "UNSEEN") && (
         <span
           title={m.label}
-          className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full"
-          style={{ background: m.color, boxShadow: `0 0 0 2px var(--bg-card)` }}
+          className={`absolute top-2 right-2 w-2.5 h-2.5 rounded-full ${heat && mastery === "MASTERED" ? "twinkle" : ""}`}
+          style={{
+            background: m.color,
+            boxShadow:
+              heat && mastery === "MASTERED"
+                ? `0 0 8px 1px ${m.color}, 0 0 0 2px var(--bg-card)`
+                : "0 0 0 2px var(--bg-card)",
+          }}
         />
       )}
 
@@ -229,13 +239,31 @@ function RowLabelNode({ data }: { data: RowLabelData }) {
   );
 }
 
+/** Edge with a particle flowing source → target (used for prerequisite links) */
+function FlowEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, markerEnd, style }: EdgeProps) {
+  const [path] = getSmoothStepPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition });
+  const op = typeof style?.opacity === "number" ? style.opacity : 1;
+  return (
+    <>
+      <BaseEdge id={id} path={path} markerEnd={markerEnd} style={style} />
+      {op > 0.25 && (
+        <circle r={2.4} fill="var(--accent)" opacity={Math.min(op + 0.2, 1)}>
+          <animateMotion dur="2.4s" repeatCount="indefinite" path={path} />
+        </circle>
+      )}
+    </>
+  );
+}
+
 const nodeTypes: NodeTypes = { kgNode: KgNode, rowLabel: RowLabelNode };
+const edgeTypes: EdgeTypes = { flow: FlowEdge };
 
 export function GraphView({ nodes: rawNodes, edges: rawEdges, selectedNodeId, onSelectNodeId, prereqEdges }: Props) {
   const { nodes, edges } = useAnimatedNodes(rawNodes as Node<KgNodeData>[], rawEdges);
 
-  // Stable reference — prevents React Flow HMR warning in dev
+  // Stable references — prevent React Flow HMR warning in dev
   const stableNodeTypes = useMemo(() => nodeTypes, []);
+  const stableEdgeTypes = useMemo(() => edgeTypes, []);
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const rfRef = useRef<ReactFlowInstance | null>(null);
@@ -302,6 +330,7 @@ export function GraphView({ nodes: rawNodes, edges: rawEdges, selectedNodeId, on
         nodes={displayNodes}
         edges={styledEdges}
         nodeTypes={stableNodeTypes}
+        edgeTypes={stableEdgeTypes}
         onInit={(inst) => { rfRef.current = inst; }}
         onNodeClick={(_, n) => onSelectNodeId?.(n.id)}
         onNodeMouseEnter={(_, n) => { if (n.type !== "rowLabel") setHoveredId(n.id); }}

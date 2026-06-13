@@ -17,6 +17,7 @@ import { MarkdownContent } from "@/features/graph-view/ui/MarkdownContent";
 import { NodeNoteEditor } from "@/features/notes/ui/NodeNoteEditor";
 import { NodeQuizPanel } from "@/features/quiz/ui/NodeQuizPanel";
 import { DiagnosticModal } from "@/features/quiz/ui/DiagnosticModal";
+import { OnboardingTour } from "./OnboardingTour";
 import { VideoEmbed, isVideoUrl } from "@/features/graph-view/ui/VideoEmbed";
 import { useMobileDetect } from "@/hooks/useMobileDetect";
 import { useSwipeDown } from "@/hooks/useSwipeDown";
@@ -41,14 +42,34 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
   const { user } = useAuth();
   const { isMobile } = useMobileDetect();
   const isAuth = !!user;
+  // Deep link: a ?node= param selects that node and opens the panel on load.
+  const initialNode = (): string | null => {
+    if (typeof window === "undefined") return null;
+    const n = new URLSearchParams(window.location.search).get("node");
+    return n && payload.nodes.some((x) => x.id === n) ? n : null;
+  };
+
   const [mode, setMode] = useState<GraphUIMode>("overview");
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [panelOpen, setPanelOpen] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(initialNode);
+  const [panelOpen, setPanelOpen] = useState(() => {
+    const n = initialNode();
+    return !!(n && n !== payload.topicId);
+  });
   const [progress, setProgress] = useState<TopicProgress | null>(null);
   const [heatmap, setHeatmap] = useState(false);
   const [unlockedSet, setUnlockedSet] = useState<Set<string>>(new Set());
   const [showDiagnostic, setShowDiagnostic] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [panelTab, setPanelTab] = useState<"theory" | "tasks" | "notes" | "links">("theory");
+  const [showOnboarding, setShowOnboarding] = useState(
+    () => typeof window !== "undefined" && !localStorage.getItem("mw-topic-onboarded"),
+  );
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const closeOnboarding = () => {
+    setShowOnboarding(false);
+    if (typeof window !== "undefined") localStorage.setItem("mw-topic-onboarded", "1");
+  };
   useSwipeDown(panelRef, () => setPanelOpen(false));
 
   // Load progress for all nodes in the topic
@@ -156,6 +177,7 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
 
   const onSelect = useCallback((id: string) => {
     setSelectedNodeId(id);
+    setPanelTab("theory");
 
     const node = payload.nodes.find((n) => n.id === id);
     if (node?.role === "TOPIC" && node.id !== payload.topicId) {
@@ -188,12 +210,37 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
     selectedNodeId,
     onSelectNode: handleKeySelectNode,
     onDepthChange: handleKeyDepthChange,
+    onActivate: () => {
+      if (selectedNodeId && selectedNodeId !== payload.topicId) setPanelOpen(true);
+    },
+    onToggleComplete: () => {
+      if (isAuth && selectedNodeId && selectedNodeId !== payload.topicId) handleToggle(selectedNodeId);
+    },
   });
 
   const selectedNode = useMemo(() => {
     if (!selectedNodeId) return null;
     return payload.nodes.find((n) => n.id === selectedNodeId) ?? null;
   }, [payload.nodes, selectedNodeId]);
+
+  // Keep the URL in sync with the current selection (shareable deep link)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (selectedNodeId && selectedNodeId !== payload.topicId) url.searchParams.set("node", selectedNodeId);
+    else url.searchParams.delete("node");
+    window.history.replaceState(window.history.state, "", url.toString());
+  }, [selectedNodeId, payload.topicId]);
+
+  const copyNodeLink = () => {
+    if (typeof navigator === "undefined" || !navigator.clipboard) return;
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 1500);
+      })
+      .catch(() => {});
+  };
 
   const roleColor = (role: string) => `var(--role-${role.toLowerCase()})`;
   const roleBg = (role: string) => `var(--role-${role.toLowerCase()}-bg)`;
@@ -434,16 +481,26 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
                   >
                     Детали темы
                   </span>
-                  <motion.button
-                    onClick={() => setPanelOpen(false)}
-                    whileHover={{ scale: 1.1, rotate: 90 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bg-card)]"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    ✕
-                  </motion.button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={copyNodeLink}
+                      title="Скопировать ссылку на этот узел"
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-sm transition-colors hover:bg-[var(--bg-card)]"
+                      style={{ color: linkCopied ? "var(--success)" : "var(--text-muted)" }}
+                    >
+                      {linkCopied ? "✓" : "⎘"}
+                    </button>
+                    <motion.button
+                      onClick={() => setPanelOpen(false)}
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bg-card)]"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      ✕
+                    </motion.button>
+                  </div>
                 </div>
 
                 {/* Progress bar */}
@@ -578,95 +635,139 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
                         )}
                       </div>
 
-                      {isAuth && gapSet.size > 0 && (
-                        <div
-                          className="mb-3 rounded-xl p-3"
-                          style={{ background: "rgba(255,107,107,0.06)", border: "1px solid rgba(255,107,107,0.25)" }}
-                        >
-                          <div className="flex items-center gap-1.5 mb-2">
-                            <span style={{ color: "var(--danger)" }} className="text-xs font-semibold">
-                              Пробелы — изучи перед этим
-                            </span>
-                            <span
-                              className="text-[10px] px-1.5 py-0.5 rounded-full"
-                              style={{ background: "rgba(255,107,107,0.15)", color: "var(--danger)" }}
+                      {/* Tabs */}
+                      <div className="flex gap-1 p-1 rounded-xl mb-4" style={{ background: "var(--bg-input)" }}>
+                        {([
+                          { id: "theory", label: "Теория" },
+                          { id: "tasks", label: "Задачи" },
+                          { id: "notes", label: "Заметки" },
+                          { id: "links", label: "Связи", count: gapSet.size },
+                        ] as const).map((t) => {
+                          const on = panelTab === t.id;
+                          return (
+                            <button
+                              key={t.id}
+                              onClick={() => setPanelTab(t.id)}
+                              className="flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-colors flex items-center justify-center gap-1"
+                              style={{
+                                background: on ? "var(--bg-secondary)" : "transparent",
+                                color: on ? "var(--accent)" : "var(--text-muted)",
+                              }}
                             >
-                              {gapSet.size}
-                            </span>
-                          </div>
-                          <div className="flex flex-wrap gap-1.5">
-                            {[...gapSet].map((gid) => {
-                              const gn = payload.nodes.find((n) => n.id === gid);
-                              return (
-                                <button
-                                  key={gid}
-                                  onClick={() => onSelect(gid)}
-                                  className="text-[11px] px-2 py-1 rounded-lg transition-colors hover:border-[var(--danger)]"
-                                  style={{ background: "var(--bg-card)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}
-                                >
-                                  {gn?.title ?? gid}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
+                              {t.label}
+                              {"count" in t && t.count > 0 && (
+                                <span className="text-[9px] px-1 rounded-full" style={{ background: "rgba(255,107,107,0.18)", color: "var(--danger)" }}>
+                                  {t.count}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
 
-                      {selectedNode.description && (
-                        <div className="mb-3">
-                          <MarkdownContent>{selectedNode.description}</MarkdownContent>
-                        </div>
-                      )}
-
-                      {selectedNode.content && (
-                        <div
-                          className="p-3 rounded-lg mb-3"
-                          style={{ background: "var(--bg-input)" }}
-                        >
-                          <MarkdownContent>{selectedNode.content}</MarkdownContent>
-                        </div>
-                      )}
-
-                      {selectedNode.resources && selectedNode.resources.length > 0 && (
+                      {/* Теория */}
+                      {panelTab === "theory" && (
                         <div>
-                          <div className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "var(--text-muted)" }}>
-                            Ресурсы
-                          </div>
-                          {selectedNode.resources.map((url, i) =>
-                            isVideoUrl(url) ? (
-                              <VideoEmbed key={i} url={url} />
-                            ) : (
-                              <a
-                                key={i}
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block text-xs truncate mb-1 transition-colors hover:text-[var(--accent)]"
-                                style={{ color: "var(--accent)" }}
-                              >
-                                {url}
-                              </a>
-                            )
+                          {selectedNode.description && (
+                            <div className="mb-3">
+                              <MarkdownContent>{selectedNode.description}</MarkdownContent>
+                            </div>
+                          )}
+                          {selectedNode.content && (
+                            <div className="p-3 rounded-lg mb-3" style={{ background: "var(--bg-input)" }}>
+                              <MarkdownContent>{selectedNode.content}</MarkdownContent>
+                            </div>
+                          )}
+                          {selectedNode.resources && selectedNode.resources.length > 0 && (
+                            <div>
+                              <div className="text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "var(--text-muted)" }}>
+                                Ресурсы
+                              </div>
+                              {selectedNode.resources.map((url, i) =>
+                                isVideoUrl(url) ? (
+                                  <VideoEmbed key={i} url={url} />
+                                ) : (
+                                  <a
+                                    key={i}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block text-xs truncate mb-1 transition-colors hover:text-[var(--accent)]"
+                                    style={{ color: "var(--accent)" }}
+                                  >
+                                    {url}
+                                  </a>
+                                )
+                              )}
+                            </div>
+                          )}
+                          {!selectedNode.description && !selectedNode.content && !(selectedNode.resources && selectedNode.resources.length > 0) && (
+                            <div className="text-xs py-4 text-center" style={{ color: "var(--text-muted)" }}>
+                              Для этого узла пока нет теории
+                            </div>
                           )}
                         </div>
+                      )}
+
+                      {/* Задачи */}
+                      {panelTab === "tasks" && (
+                        selectedNode.id !== payload.topicId ? (
+                          <NodeQuizPanel nodeId={selectedNode.id} isAuth={isAuth} />
+                        ) : (
+                          <div className="text-xs py-4 text-center" style={{ color: "var(--text-muted)" }}>
+                            Выберите узел темы, чтобы порешать
+                          </div>
+                        )
+                      )}
+
+                      {/* Заметки */}
+                      {panelTab === "notes" && (
+                        isAuth && selectedNode.id !== payload.topicId ? (
+                          <NodeNoteEditor nodeId={selectedNode.id} />
+                        ) : (
+                          <div className="text-xs py-4 text-center" style={{ color: "var(--text-muted)" }}>
+                            {isAuth ? "Заметки доступны для узлов темы" : "Войдите, чтобы вести заметки"}
+                          </div>
+                        )
+                      )}
+
+                      {/* Связи / пробелы */}
+                      {panelTab === "links" && (
+                        isAuth && gapSet.size > 0 ? (
+                          <div className="rounded-xl p-3" style={{ background: "rgba(255,107,107,0.06)", border: "1px solid rgba(255,107,107,0.25)" }}>
+                            <div className="flex items-center gap-1.5 mb-2">
+                              <span style={{ color: "var(--danger)" }} className="text-xs font-semibold">
+                                Пробелы — изучи перед этим
+                              </span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(255,107,107,0.15)", color: "var(--danger)" }}>
+                                {gapSet.size}
+                              </span>
+                            </div>
+                            <div className="flex flex-wrap gap-1.5">
+                              {[...gapSet].map((gid) => {
+                                const gn = payload.nodes.find((n) => n.id === gid);
+                                return (
+                                  <button
+                                    key={gid}
+                                    onClick={() => onSelect(gid)}
+                                    className="text-[11px] px-2 py-1 rounded-lg transition-colors hover:border-[var(--danger)]"
+                                    style={{ background: "var(--bg-card)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}
+                                  >
+                                    {gn?.title ?? gid}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-xs py-4 text-center" style={{ color: "var(--text-muted)" }}>
+                            {isAuth ? "Пробелов нет — все пререквизиты пройдены" : "Войдите, чтобы видеть пробелы"}
+                          </div>
+                        )
                       )}
                     </motion.div>
                   )}
                 </AnimatePresence>
-
-                {/* Node note */}
-                {isAuth && selectedNode && selectedNode.id !== payload.topicId && (
-                  <div className="glass-card p-4 mb-5 !transform-none">
-                    <NodeNoteEditor nodeId={selectedNode.id} />
-                  </div>
-                )}
-
-                {/* Quiz */}
-                {selectedNode && selectedNode.id !== payload.topicId && (
-                  <div className="glass-card p-4 mb-5 !transform-none">
-                    <NodeQuizPanel nodeId={selectedNode.id} isAuth={isAuth} />
-                  </div>
-                )}
 
                 {/* Study Plan */}
                 <div className="mb-5">
@@ -698,6 +799,11 @@ export function TopicPageLayout({ payload, onDepthChange }: Props) {
             onComplete={handleDiagnosticComplete}
           />
         )}
+      </AnimatePresence>
+
+      {/* ── First-visit onboarding ── */}
+      <AnimatePresence>
+        {showOnboarding && <OnboardingTour onClose={closeOnboarding} />}
       </AnimatePresence>
     </div>
   );

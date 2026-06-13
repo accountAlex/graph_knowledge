@@ -6,6 +6,8 @@ type Params = {
   selectedNodeId: string | null;
   onSelectNode: (id: string | null) => void;
   onDepthChange?: (delta: number) => void;
+  onActivate?: () => void;        // Enter — open details for the selected node
+  onToggleComplete?: () => void;  // Space — mark/unmark the selected node
 };
 
 function isInputFocused() {
@@ -17,7 +19,7 @@ function isInputFocused() {
  * Keyboard navigation for graph views.
  * Returns `showHelp` state + setter to toggle the shortcuts overlay.
  */
-export function useGraphKeyboardNav({ nodes, selectedNodeId, onSelectNode, onDepthChange }: Params) {
+export function useGraphKeyboardNav({ nodes, selectedNodeId, onSelectNode, onDepthChange, onActivate, onToggleComplete }: Params) {
   const [showHelp, setShowHelp] = useState(false);
 
   const findNearest = useCallback(
@@ -74,6 +76,16 @@ export function useGraphKeyboardNav({ nodes, selectedNodeId, onSelectNode, onDep
           }
           break;
         }
+        case "Enter":
+          if (!selectedNodeId) break;
+          e.preventDefault();
+          onActivate?.();
+          break;
+        case " ":
+          if (!selectedNodeId) break;
+          e.preventDefault();
+          onToggleComplete?.();
+          break;
         case "Escape":
           e.preventDefault();
           onSelectNode(null);
@@ -110,7 +122,7 @@ export function useGraphKeyboardNav({ nodes, selectedNodeId, onSelectNode, onDep
 
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [nodes, selectedNodeId, onSelectNode, onDepthChange, findNearest]);
+  }, [nodes, selectedNodeId, onSelectNode, onDepthChange, onActivate, onToggleComplete, findNearest]);
 
   return { showHelp, setShowHelp };
 }

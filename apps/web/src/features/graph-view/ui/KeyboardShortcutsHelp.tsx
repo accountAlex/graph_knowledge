@@ -4,6 +4,8 @@ const SHORTCUTS = [
   { keys: ["↑", "↓", "←", "→"], desc: "Навигация по узлам" },
   { keys: ["Tab"], desc: "Следующий узел" },
   { keys: ["Shift+Tab"], desc: "Предыдущий узел" },
+  { keys: ["Enter"], desc: "Открыть детали узла" },
+  { keys: ["Space"], desc: "Отметить как изучено" },
   { keys: ["+", "]"], desc: "Увеличить depth" },
   { keys: ["-", "["], desc: "Уменьшить depth" },
   { keys: ["Esc"], desc: "Снять выделение" },

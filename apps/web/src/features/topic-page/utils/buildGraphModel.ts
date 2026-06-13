@@ -288,7 +288,7 @@ export function buildGraphModel(params: {
       id: `${e.from}->${e.to}:${e.kind}`,
       source: e.from,
       target: e.to,
-      type: "smoothstep",
+      type: e.kind === "PREREQ_REQUIRED" ? "flow" : "smoothstep",
     }));
 
   return { nodes, edges };
