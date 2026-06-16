@@ -18,6 +18,12 @@ import { QuizService } from "./quiz.service";
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
+  /** Build an exam variant — shuffled questions, no answers (static route first) */
+  @Get("exam")
+  getExam(@Query("limit") limit?: string) {
+    return this.quizService.getExam(limit ? Number(limit) : 15);
+  }
+
   /** Build a topic diagnostic — spread of questions, no answers (static route first) */
   @Get("diagnostic")
   getDiagnostic(

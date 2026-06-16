@@ -233,6 +233,14 @@ model UserProgress {
   confidence  Int?         // 0-100, optional self/derived confidence
   lastEventAt DateTime?
 
+  // Spaced repetition (Block 2) — SM-2 scheduling per node
+  dueAt          DateTime?
+  srsInterval    Int       @default(0)   // days until next review
+  ease           Float     @default(2.5) // SM-2 ease factor
+  reps           Int       @default(0)
+  lapses         Int       @default(0)
+  lastReviewedAt DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -241,6 +249,7 @@ model UserProgress {
   @@unique([userId, nodeId])
   @@index([userId])
   @@index([userId, mastery])
+  @@index([userId, dueAt])
 }
 
 model LearningEvent {

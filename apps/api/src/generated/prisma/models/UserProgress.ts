@@ -28,10 +28,18 @@ export type AggregateUserProgress = {
 
 export type UserProgressAvgAggregateOutputType = {
   confidence: number | null
+  srsInterval: number | null
+  ease: number | null
+  reps: number | null
+  lapses: number | null
 }
 
 export type UserProgressSumAggregateOutputType = {
   confidence: number | null
+  srsInterval: number | null
+  ease: number | null
+  reps: number | null
+  lapses: number | null
 }
 
 export type UserProgressMinAggregateOutputType = {
@@ -43,6 +51,12 @@ export type UserProgressMinAggregateOutputType = {
   mastery: $Enums.MasteryLevel | null
   confidence: number | null
   lastEventAt: Date | null
+  dueAt: Date | null
+  srsInterval: number | null
+  ease: number | null
+  reps: number | null
+  lapses: number | null
+  lastReviewedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +70,12 @@ export type UserProgressMaxAggregateOutputType = {
   mastery: $Enums.MasteryLevel | null
   confidence: number | null
   lastEventAt: Date | null
+  dueAt: Date | null
+  srsInterval: number | null
+  ease: number | null
+  reps: number | null
+  lapses: number | null
+  lastReviewedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,6 +89,12 @@ export type UserProgressCountAggregateOutputType = {
   mastery: number
   confidence: number
   lastEventAt: number
+  dueAt: number
+  srsInterval: number
+  ease: number
+  reps: number
+  lapses: number
+  lastReviewedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -77,10 +103,18 @@ export type UserProgressCountAggregateOutputType = {
 
 export type UserProgressAvgAggregateInputType = {
   confidence?: true
+  srsInterval?: true
+  ease?: true
+  reps?: true
+  lapses?: true
 }
 
 export type UserProgressSumAggregateInputType = {
   confidence?: true
+  srsInterval?: true
+  ease?: true
+  reps?: true
+  lapses?: true
 }
 
 export type UserProgressMinAggregateInputType = {
@@ -92,6 +126,12 @@ export type UserProgressMinAggregateInputType = {
   mastery?: true
   confidence?: true
   lastEventAt?: true
+  dueAt?: true
+  srsInterval?: true
+  ease?: true
+  reps?: true
+  lapses?: true
+  lastReviewedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -105,6 +145,12 @@ export type UserProgressMaxAggregateInputType = {
   mastery?: true
   confidence?: true
   lastEventAt?: true
+  dueAt?: true
+  srsInterval?: true
+  ease?: true
+  reps?: true
+  lapses?: true
+  lastReviewedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,6 +164,12 @@ export type UserProgressCountAggregateInputType = {
   mastery?: true
   confidence?: true
   lastEventAt?: true
+  dueAt?: true
+  srsInterval?: true
+  ease?: true
+  reps?: true
+  lapses?: true
+  lastReviewedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -218,6 +270,12 @@ export type UserProgressGroupByOutputType = {
   mastery: $Enums.MasteryLevel
   confidence: number | null
   lastEventAt: Date | null
+  dueAt: Date | null
+  srsInterval: number
+  ease: number
+  reps: number
+  lapses: number
+  lastReviewedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: UserProgressCountAggregateOutputType | null
@@ -254,6 +312,12 @@ export type UserProgressWhereInput = {
   mastery?: Prisma.EnumMasteryLevelFilter<"UserProgress"> | $Enums.MasteryLevel
   confidence?: Prisma.IntNullableFilter<"UserProgress"> | number | null
   lastEventAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  dueAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  srsInterval?: Prisma.IntFilter<"UserProgress"> | number
+  ease?: Prisma.FloatFilter<"UserProgress"> | number
+  reps?: Prisma.IntFilter<"UserProgress"> | number
+  lapses?: Prisma.IntFilter<"UserProgress"> | number
+  lastReviewedAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -268,6 +332,12 @@ export type UserProgressOrderByWithRelationInput = {
   mastery?: Prisma.SortOrder
   confidence?: Prisma.SortOrderInput | Prisma.SortOrder
   lastEventAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  dueAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
+  lastReviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -286,6 +356,12 @@ export type UserProgressWhereUniqueInput = Prisma.AtLeast<{
   mastery?: Prisma.EnumMasteryLevelFilter<"UserProgress"> | $Enums.MasteryLevel
   confidence?: Prisma.IntNullableFilter<"UserProgress"> | number | null
   lastEventAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  dueAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  srsInterval?: Prisma.IntFilter<"UserProgress"> | number
+  ease?: Prisma.FloatFilter<"UserProgress"> | number
+  reps?: Prisma.IntFilter<"UserProgress"> | number
+  lapses?: Prisma.IntFilter<"UserProgress"> | number
+  lastReviewedAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -300,6 +376,12 @@ export type UserProgressOrderByWithAggregationInput = {
   mastery?: Prisma.SortOrder
   confidence?: Prisma.SortOrderInput | Prisma.SortOrder
   lastEventAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  dueAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
+  lastReviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserProgressCountOrderByAggregateInput
@@ -321,6 +403,12 @@ export type UserProgressScalarWhereWithAggregatesInput = {
   mastery?: Prisma.EnumMasteryLevelWithAggregatesFilter<"UserProgress"> | $Enums.MasteryLevel
   confidence?: Prisma.IntNullableWithAggregatesFilter<"UserProgress"> | number | null
   lastEventAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProgress"> | Date | string | null
+  dueAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProgress"> | Date | string | null
+  srsInterval?: Prisma.IntWithAggregatesFilter<"UserProgress"> | number
+  ease?: Prisma.FloatWithAggregatesFilter<"UserProgress"> | number
+  reps?: Prisma.IntWithAggregatesFilter<"UserProgress"> | number
+  lapses?: Prisma.IntWithAggregatesFilter<"UserProgress"> | number
+  lastReviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
 }
@@ -333,6 +421,12 @@ export type UserProgressCreateInput = {
   mastery?: $Enums.MasteryLevel
   confidence?: number | null
   lastEventAt?: Date | string | null
+  dueAt?: Date | string | null
+  srsInterval?: number
+  ease?: number
+  reps?: number
+  lapses?: number
+  lastReviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProgressInput
@@ -347,6 +441,12 @@ export type UserProgressUncheckedCreateInput = {
   mastery?: $Enums.MasteryLevel
   confidence?: number | null
   lastEventAt?: Date | string | null
+  dueAt?: Date | string | null
+  srsInterval?: number
+  ease?: number
+  reps?: number
+  lapses?: number
+  lastReviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -359,6 +459,12 @@ export type UserProgressUpdateInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProgressNestedInput
@@ -373,6 +479,12 @@ export type UserProgressUncheckedUpdateInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -386,6 +498,12 @@ export type UserProgressCreateManyInput = {
   mastery?: $Enums.MasteryLevel
   confidence?: number | null
   lastEventAt?: Date | string | null
+  dueAt?: Date | string | null
+  srsInterval?: number
+  ease?: number
+  reps?: number
+  lapses?: number
+  lastReviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -398,6 +516,12 @@ export type UserProgressUpdateManyMutationInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -411,6 +535,12 @@ export type UserProgressUncheckedUpdateManyInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -439,12 +569,22 @@ export type UserProgressCountOrderByAggregateInput = {
   mastery?: Prisma.SortOrder
   confidence?: Prisma.SortOrder
   lastEventAt?: Prisma.SortOrder
+  dueAt?: Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
+  lastReviewedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type UserProgressAvgOrderByAggregateInput = {
   confidence?: Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
 }
 
 export type UserProgressMaxOrderByAggregateInput = {
@@ -456,6 +596,12 @@ export type UserProgressMaxOrderByAggregateInput = {
   mastery?: Prisma.SortOrder
   confidence?: Prisma.SortOrder
   lastEventAt?: Prisma.SortOrder
+  dueAt?: Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
+  lastReviewedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -469,12 +615,22 @@ export type UserProgressMinOrderByAggregateInput = {
   mastery?: Prisma.SortOrder
   confidence?: Prisma.SortOrder
   lastEventAt?: Prisma.SortOrder
+  dueAt?: Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
+  lastReviewedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type UserProgressSumOrderByAggregateInput = {
   confidence?: Prisma.SortOrder
+  srsInterval?: Prisma.SortOrder
+  ease?: Prisma.SortOrder
+  reps?: Prisma.SortOrder
+  lapses?: Prisma.SortOrder
 }
 
 export type UserProgressCreateNestedManyWithoutUserInput = {
@@ -535,6 +691,14 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserProgressCreateWithoutUserInput = {
   id?: string
   nodeId: string
@@ -543,6 +707,12 @@ export type UserProgressCreateWithoutUserInput = {
   mastery?: $Enums.MasteryLevel
   confidence?: number | null
   lastEventAt?: Date | string | null
+  dueAt?: Date | string | null
+  srsInterval?: number
+  ease?: number
+  reps?: number
+  lapses?: number
+  lastReviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -555,6 +725,12 @@ export type UserProgressUncheckedCreateWithoutUserInput = {
   mastery?: $Enums.MasteryLevel
   confidence?: number | null
   lastEventAt?: Date | string | null
+  dueAt?: Date | string | null
+  srsInterval?: number
+  ease?: number
+  reps?: number
+  lapses?: number
+  lastReviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -597,6 +773,12 @@ export type UserProgressScalarWhereInput = {
   mastery?: Prisma.EnumMasteryLevelFilter<"UserProgress"> | $Enums.MasteryLevel
   confidence?: Prisma.IntNullableFilter<"UserProgress"> | number | null
   lastEventAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  dueAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
+  srsInterval?: Prisma.IntFilter<"UserProgress"> | number
+  ease?: Prisma.FloatFilter<"UserProgress"> | number
+  reps?: Prisma.IntFilter<"UserProgress"> | number
+  lapses?: Prisma.IntFilter<"UserProgress"> | number
+  lastReviewedAt?: Prisma.DateTimeNullableFilter<"UserProgress"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
 }
@@ -609,6 +791,12 @@ export type UserProgressCreateManyUserInput = {
   mastery?: $Enums.MasteryLevel
   confidence?: number | null
   lastEventAt?: Date | string | null
+  dueAt?: Date | string | null
+  srsInterval?: number
+  ease?: number
+  reps?: number
+  lapses?: number
+  lastReviewedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -621,6 +809,12 @@ export type UserProgressUpdateWithoutUserInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -633,6 +827,12 @@ export type UserProgressUncheckedUpdateWithoutUserInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -645,6 +845,12 @@ export type UserProgressUncheckedUpdateManyWithoutUserInput = {
   mastery?: Prisma.EnumMasteryLevelFieldUpdateOperationsInput | $Enums.MasteryLevel
   confidence?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lastEventAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  srsInterval?: Prisma.IntFieldUpdateOperationsInput | number
+  ease?: Prisma.FloatFieldUpdateOperationsInput | number
+  reps?: Prisma.IntFieldUpdateOperationsInput | number
+  lapses?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -660,6 +866,12 @@ export type UserProgressSelect<ExtArgs extends runtime.Types.Extensions.Internal
   mastery?: boolean
   confidence?: boolean
   lastEventAt?: boolean
+  dueAt?: boolean
+  srsInterval?: boolean
+  ease?: boolean
+  reps?: boolean
+  lapses?: boolean
+  lastReviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -674,6 +886,12 @@ export type UserProgressSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   mastery?: boolean
   confidence?: boolean
   lastEventAt?: boolean
+  dueAt?: boolean
+  srsInterval?: boolean
+  ease?: boolean
+  reps?: boolean
+  lapses?: boolean
+  lastReviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -688,6 +906,12 @@ export type UserProgressSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   mastery?: boolean
   confidence?: boolean
   lastEventAt?: boolean
+  dueAt?: boolean
+  srsInterval?: boolean
+  ease?: boolean
+  reps?: boolean
+  lapses?: boolean
+  lastReviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -702,11 +926,17 @@ export type UserProgressSelectScalar = {
   mastery?: boolean
   confidence?: boolean
   lastEventAt?: boolean
+  dueAt?: boolean
+  srsInterval?: boolean
+  ease?: boolean
+  reps?: boolean
+  lapses?: boolean
+  lastReviewedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "nodeId" | "completed" | "completedAt" | "mastery" | "confidence" | "lastEventAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProgress"]>
+export type UserProgressOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "nodeId" | "completed" | "completedAt" | "mastery" | "confidence" | "lastEventAt" | "dueAt" | "srsInterval" | "ease" | "reps" | "lapses" | "lastReviewedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userProgress"]>
 export type UserProgressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -731,6 +961,12 @@ export type $UserProgressPayload<ExtArgs extends runtime.Types.Extensions.Intern
     mastery: $Enums.MasteryLevel
     confidence: number | null
     lastEventAt: Date | null
+    dueAt: Date | null
+    srsInterval: number
+    ease: number
+    reps: number
+    lapses: number
+    lastReviewedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userProgress"]>
@@ -1165,6 +1401,12 @@ export interface UserProgressFieldRefs {
   readonly mastery: Prisma.FieldRef<"UserProgress", 'MasteryLevel'>
   readonly confidence: Prisma.FieldRef<"UserProgress", 'Int'>
   readonly lastEventAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
+  readonly dueAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
+  readonly srsInterval: Prisma.FieldRef<"UserProgress", 'Int'>
+  readonly ease: Prisma.FieldRef<"UserProgress", 'Float'>
+  readonly reps: Prisma.FieldRef<"UserProgress", 'Int'>
+  readonly lapses: Prisma.FieldRef<"UserProgress", 'Int'>
+  readonly lastReviewedAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserProgress", 'DateTime'>
 }

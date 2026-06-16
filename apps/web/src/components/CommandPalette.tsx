@@ -88,8 +88,16 @@ export function CommandPalette() {
       { key: "trial", label: "Записаться на пробное", icon: "→", accent: "var(--accent)", run: go("/#trial") },
       { key: "theme", label: "Переключить тему", icon: "◐", run: () => { toggle(); } },
     ];
-    if (user) list.splice(4, 0, { key: "profile", label: "Профиль", sub: "Прогресс и достижения", icon: "◯", run: go("/profile") });
-    else list.push({ key: "auth", label: "Войти", icon: "◉", run: go("/auth") });
+    if (user) {
+      list.splice(
+        4, 0,
+        { key: "profile", label: "Профиль", sub: "Прогресс и достижения", icon: "◯", run: go("/profile") },
+        { key: "review", label: "Повторение", sub: "Карточки на сегодня", icon: "↻", run: go("/review") },
+        { key: "exam", label: "Пробный экзамен", sub: "Вариант с таймером", icon: "✎", run: go("/exam") },
+      );
+    } else {
+      list.push({ key: "auth", label: "Войти", icon: "◉", run: go("/auth") });
+    }
     return list;
   }, [router, toggle, user, close]);
 

@@ -75,6 +75,31 @@ export class ProgressController {
     return this.progress.getRecentEvents(req.user.id, limit ? Number(limit) : 50);
   }
 
+  /** Count of nodes due for spaced-repetition review */
+  @Get("reviews/count")
+  getDueCount(@Request() req: { user: { id: string } }) {
+    return this.progress.getDueCount(req.user.id);
+  }
+
+  /** Nodes due for review (with titles) */
+  @Get("reviews")
+  getDueReviews(
+    @Request() req: { user: { id: string } },
+    @Query("limit") limit?: string,
+  ) {
+    return this.progress.getDueReviews(req.user.id, limit ? Number(limit) : 20);
+  }
+
+  /** Submit a review with recall quality (0-5) — reschedules with SM-2 */
+  @Post("reviews/:nodeId")
+  submitReview(
+    @Request() req: { user: { id: string } },
+    @Param("nodeId") nodeId: string,
+    @Body() body: { quality: number },
+  ) {
+    return this.progress.submitReview(req.user.id, nodeId, body.quality);
+  }
+
   /** Record that the user viewed a node (UNSEEN → SEEN) */
   @Post("view/:nodeId")
   view(

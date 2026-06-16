@@ -81,6 +81,13 @@ export async function fetchDiagnostic(topicId: string, limit = 10): Promise<Diag
   return res.json();
 }
 
+/** Exam variant — questions drawn mostly from TASK nodes (no answers). */
+export async function fetchExam(limit = 15): Promise<DiagnosticQuestion[]> {
+  const res = await fetch(`${baseUrl()}/quiz/exam?limit=${limit}`);
+  if (!res.ok) throw new Error("Failed to fetch exam");
+  return res.json();
+}
+
 export async function submitDiagnostic(
   answers: { questionId: string; answer: string }[],
 ): Promise<DiagnosticResult> {

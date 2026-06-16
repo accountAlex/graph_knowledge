@@ -96,3 +96,36 @@ export async function fetchRecentEvents(limit = 50): Promise<LearningEvent[]> {
   if (!res.ok) throw new Error("Failed to fetch events");
   return res.json();
 }
+
+// ── Spaced repetition (Block 2) ─────────────────────────────────────────────
+export interface DueReview {
+  nodeId: string;
+  title: string;
+  description: string | null;
+  role: string | null;
+  reps: number;
+  lapses: number;
+  mastery: MasteryLevel;
+}
+
+export async function fetchDueReviews(limit = 20): Promise<DueReview[]> {
+  const res = await fetch(`${baseUrl()}/progress/reviews?limit=${limit}`, { headers: authHeaders() });
+  if (!res.ok) throw new Error("Failed to fetch reviews");
+  return res.json();
+}
+
+export async function fetchDueCount(): Promise<{ due: number }> {
+  const res = await fetch(`${baseUrl()}/progress/reviews/count`, { headers: authHeaders() });
+  if (!res.ok) throw new Error("Failed to fetch due count");
+  return res.json();
+}
+
+export async function submitReview(nodeId: string, quality: number): Promise<{ nodeId: string; scheduled: boolean; interval?: number }> {
+  const res = await fetch(`${baseUrl()}/progress/reviews/${nodeId}`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ quality }),
+  });
+  if (!res.ok) throw new Error("Failed to submit review");
+  return res.json();
+}

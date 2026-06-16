@@ -156,6 +156,38 @@ export class QuizService {
   }
 
   /**
+   * Build an exam variant: a shuffled set of questions drawn primarily from
+   * TASK nodes (supplemented by others if needed). Answers are withheld;
+   * grading reuses submitDiagnostic.
+   */
+  async getExam(limit = 15) {
+    const taskNodes = await this.prisma.kgNodeRegistry.findMany({
+      where: { role: "TASK" },
+      select: { id: true },
+    });
+    const taskIds = taskNodes.map((n) => n.id);
+
+    const select = { id: true, type: true, question: true, options: true, nodeId: true } as const;
+    let questions = await this.prisma.nodeQuestion.findMany({
+      where: { nodeId: { in: taskIds } },
+      select,
+    });
+    if (questions.length < limit) {
+      const extra = await this.prisma.nodeQuestion.findMany({
+        where: { nodeId: { notIn: taskIds } },
+        select,
+      });
+      questions = [...questions, ...extra];
+    }
+
+    for (let i = questions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    return questions.slice(0, limit);
+  }
+
+  /**
    * Grade a batch of diagnostic answers, record attempts, and derive a mastery
    * level per node (all correct → MASTERED, some → PRACTICED, none → SEEN).
    */

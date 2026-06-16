@@ -142,6 +142,94 @@ export class ProgressService {
     return unlocked;
   }
 
+  // ──────────── Spaced repetition (Block 2) ────────────
+
+  /** Nodes due for review: mastered/practiced and (never reviewed or past due). */
+  async getDueReviews(userId: string, limit = 20) {
+    const now = new Date();
+    const rows = await this.prisma.userProgress.findMany({
+      where: {
+        userId,
+        mastery: { in: [MasteryLevel.PRACTICED, MasteryLevel.MASTERED] },
+        OR: [{ dueAt: null }, { dueAt: { lte: now } }],
+      },
+      orderBy: { dueAt: { sort: "asc", nulls: "first" } },
+      take: Math.min(Math.max(limit, 1), 100),
+      select: { nodeId: true, dueAt: true, reps: true, lapses: true, mastery: true },
+    });
+    if (rows.length === 0) return [];
+
+    const ids = rows.map((r) => r.nodeId);
+    const meta = await this.prisma.kgNodeRegistry.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, title: true, description: true, role: true },
+    });
+    const byId = new Map(meta.map((m) => [m.id, m]));
+
+    return rows.map((r) => ({
+      nodeId: r.nodeId,
+      title: byId.get(r.nodeId)?.title ?? r.nodeId,
+      description: byId.get(r.nodeId)?.description ?? null,
+      role: byId.get(r.nodeId)?.role ?? null,
+      reps: r.reps,
+      lapses: r.lapses,
+      mastery: r.mastery,
+    }));
+  }
+
+  /** Count of nodes currently due for review. */
+  async getDueCount(userId: string) {
+    const now = new Date();
+    const count = await this.prisma.userProgress.count({
+      where: {
+        userId,
+        mastery: { in: [MasteryLevel.PRACTICED, MasteryLevel.MASTERED] },
+        OR: [{ dueAt: null }, { dueAt: { lte: now } }],
+      },
+    });
+    return { due: count };
+  }
+
+  /**
+   * Record a review with a recall quality (0-5) and reschedule with SM-2.
+   * quality < 3 is a lapse (review again soon); ≥ 3 grows the interval.
+   */
+  async submitReview(userId: string, nodeId: string, quality: number) {
+    const q = Math.max(0, Math.min(5, Math.round(quality)));
+    const row = await this.prisma.userProgress.findUnique({
+      where: { userId_nodeId: { userId, nodeId } },
+    });
+    if (!row) return { nodeId, scheduled: false };
+
+    let ease = row.ease;
+    let interval = row.srsInterval;
+    let reps = row.reps;
+    let lapses = row.lapses;
+
+    if (q < 3) {
+      reps = 0;
+      interval = 1;
+      lapses += 1;
+    } else {
+      reps += 1;
+      if (reps === 1) interval = 1;
+      else if (reps === 2) interval = 6;
+      else interval = Math.round(interval * ease);
+    }
+    ease = Math.max(1.3, ease + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
+
+    const now = new Date();
+    const dueAt = new Date(now.getTime() + interval * 86_400_000);
+
+    await this.prisma.userProgress.update({
+      where: { id: row.id },
+      data: { ease, srsInterval: interval, reps, lapses, dueAt, lastReviewedAt: now },
+    });
+    await this.logEvent(userId, nodeId, LearningEventType.REVIEW, { quality: q, interval });
+
+    return { nodeId, scheduled: true, interval, dueAt };
+  }
+
   /** Recent learning events for the user (newest first). */
   async getRecentEvents(userId: string, limit = 50) {
     return this.prisma.learningEvent.findMany({

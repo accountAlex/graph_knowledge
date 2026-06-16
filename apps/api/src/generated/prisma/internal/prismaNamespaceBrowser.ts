@@ -236,6 +236,12 @@ export const UserProgressScalarFieldEnum = {
   mastery: 'mastery',
   confidence: 'confidence',
   lastEventAt: 'lastEventAt',
+  dueAt: 'dueAt',
+  srsInterval: 'srsInterval',
+  ease: 'ease',
+  reps: 'reps',
+  lapses: 'lapses',
+  lastReviewedAt: 'lastReviewedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
