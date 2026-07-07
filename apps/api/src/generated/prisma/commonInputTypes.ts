@@ -6,7 +6,7 @@
 /*
  * This file exports various common sort, input & filter types that are not directly linked to a particular model.
  *
- * 🟢 You can import this file directly.
+ * You can import this file directly.
  */
 
 import type * as runtime from "@prisma/client/runtime/client"
@@ -450,6 +450,57 @@ export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonNullableFilter<$PrismaModel>
 }
 
+export type EnumWhiteboardRoleNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumWhiteboardRoleNullableFilter<$PrismaModel> | $Enums.WhiteboardRole | null
+}
+
+export type EnumWhiteboardRoleNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumWhiteboardRoleNullableWithAggregatesFilter<$PrismaModel> | $Enums.WhiteboardRole | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWhiteboardRoleNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWhiteboardRoleNullableFilter<$PrismaModel>
+}
+
+export type EnumWhiteboardRoleFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWhiteboardRoleFilter<$PrismaModel> | $Enums.WhiteboardRole
+}
+
+export type EnumWhiteboardRoleWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWhiteboardRoleWithAggregatesFilter<$PrismaModel> | $Enums.WhiteboardRole
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWhiteboardRoleFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWhiteboardRoleFilter<$PrismaModel>
+}
+
+export type BytesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesFilter<$PrismaModel> | runtime.Bytes
+}
+
+export type BytesWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesWithAggregatesFilter<$PrismaModel> | runtime.Bytes
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBytesFilter<$PrismaModel>
+  _max?: Prisma.NestedBytesFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -832,6 +883,57 @@ export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type NestedEnumWhiteboardRoleNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumWhiteboardRoleNullableFilter<$PrismaModel> | $Enums.WhiteboardRole | null
+}
+
+export type NestedEnumWhiteboardRoleNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumWhiteboardRoleNullableWithAggregatesFilter<$PrismaModel> | $Enums.WhiteboardRole | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWhiteboardRoleNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWhiteboardRoleNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumWhiteboardRoleFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWhiteboardRoleFilter<$PrismaModel> | $Enums.WhiteboardRole
+}
+
+export type NestedEnumWhiteboardRoleWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WhiteboardRole | Prisma.EnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  in?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.WhiteboardRole[] | Prisma.ListEnumWhiteboardRoleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumWhiteboardRoleWithAggregatesFilter<$PrismaModel> | $Enums.WhiteboardRole
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumWhiteboardRoleFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumWhiteboardRoleFilter<$PrismaModel>
+}
+
+export type NestedBytesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesFilter<$PrismaModel> | runtime.Bytes
+}
+
+export type NestedBytesWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: runtime.Bytes | Prisma.BytesFieldRefInput<$PrismaModel>
+  in?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  notIn?: runtime.Bytes[] | Prisma.ListBytesFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBytesWithAggregatesFilter<$PrismaModel> | runtime.Bytes
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBytesFilter<$PrismaModel>
+  _max?: Prisma.NestedBytesFilter<$PrismaModel>
 }
 
 

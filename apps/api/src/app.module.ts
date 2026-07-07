@@ -20,6 +20,7 @@ import { NotesModule } from './notes/notes.module';
 import { QuizModule } from './quiz/quiz.module';
 import { RouteModule } from './route/route.module';
 import { AutoLinkModule } from './auto-link/auto-link.module';
+import { WhiteboardModule } from './whiteboard/whiteboard.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AutoLinkModule } from './auto-link/auto-link.module';
     QuizModule,
     RouteModule,
     AutoLinkModule,
+    WhiteboardModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

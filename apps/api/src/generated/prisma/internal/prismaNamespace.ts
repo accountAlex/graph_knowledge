@@ -6,7 +6,7 @@
 /*
  * WARNING: This is an internal file that is subject to change!
  *
- * 🛑 Under no circumstances should you import this file directly! 🛑
+ * Under no circumstances should you import this file directly! 🛑
  *
  * All exports from this file are wrapped under a `Prisma` namespace object in the client.ts file.
  * While this enables partial backward compatibility, it is not part of the stable public API.
@@ -396,7 +396,10 @@ export const ModelName = {
   NodeQuestion: 'NodeQuestion',
   QuizAttempt: 'QuizAttempt',
   UserProgress: 'UserProgress',
-  LearningEvent: 'LearningEvent'
+  LearningEvent: 'LearningEvent',
+  Whiteboard: 'Whiteboard',
+  WhiteboardMember: 'WhiteboardMember',
+  WhiteboardSnapshot: 'WhiteboardSnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -412,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "chatSession" | "kgNodeRegistry" | "kgNodeVersion" | "topicView" | "topicViewSlot" | "topicViewSlotPinned" | "microPlan" | "nodeNote" | "nodeQuestion" | "quizAttempt" | "userProgress" | "learningEvent"
+    modelProps: "user" | "chatSession" | "kgNodeRegistry" | "kgNodeVersion" | "topicView" | "topicViewSlot" | "topicViewSlotPinned" | "microPlan" | "nodeNote" | "nodeQuestion" | "quizAttempt" | "userProgress" | "learningEvent" | "whiteboard" | "whiteboardMember" | "whiteboardSnapshot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1378,6 +1381,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Whiteboard: {
+      payload: Prisma.$WhiteboardPayload<ExtArgs>
+      fields: Prisma.WhiteboardFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WhiteboardFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WhiteboardFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>
+        }
+        findFirst: {
+          args: Prisma.WhiteboardFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WhiteboardFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>
+        }
+        findMany: {
+          args: Prisma.WhiteboardFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>[]
+        }
+        create: {
+          args: Prisma.WhiteboardCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>
+        }
+        createMany: {
+          args: Prisma.WhiteboardCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WhiteboardCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>[]
+        }
+        delete: {
+          args: Prisma.WhiteboardDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>
+        }
+        update: {
+          args: Prisma.WhiteboardUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>
+        }
+        deleteMany: {
+          args: Prisma.WhiteboardDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WhiteboardUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WhiteboardUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>[]
+        }
+        upsert: {
+          args: Prisma.WhiteboardUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardPayload>
+        }
+        aggregate: {
+          args: Prisma.WhiteboardAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWhiteboard>
+        }
+        groupBy: {
+          args: Prisma.WhiteboardGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WhiteboardGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WhiteboardCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WhiteboardCountAggregateOutputType> | number
+        }
+      }
+    }
+    WhiteboardMember: {
+      payload: Prisma.$WhiteboardMemberPayload<ExtArgs>
+      fields: Prisma.WhiteboardMemberFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WhiteboardMemberFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WhiteboardMemberFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>
+        }
+        findFirst: {
+          args: Prisma.WhiteboardMemberFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WhiteboardMemberFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>
+        }
+        findMany: {
+          args: Prisma.WhiteboardMemberFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>[]
+        }
+        create: {
+          args: Prisma.WhiteboardMemberCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>
+        }
+        createMany: {
+          args: Prisma.WhiteboardMemberCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WhiteboardMemberCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>[]
+        }
+        delete: {
+          args: Prisma.WhiteboardMemberDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>
+        }
+        update: {
+          args: Prisma.WhiteboardMemberUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>
+        }
+        deleteMany: {
+          args: Prisma.WhiteboardMemberDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WhiteboardMemberUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WhiteboardMemberUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>[]
+        }
+        upsert: {
+          args: Prisma.WhiteboardMemberUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardMemberPayload>
+        }
+        aggregate: {
+          args: Prisma.WhiteboardMemberAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWhiteboardMember>
+        }
+        groupBy: {
+          args: Prisma.WhiteboardMemberGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WhiteboardMemberGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WhiteboardMemberCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WhiteboardMemberCountAggregateOutputType> | number
+        }
+      }
+    }
+    WhiteboardSnapshot: {
+      payload: Prisma.$WhiteboardSnapshotPayload<ExtArgs>
+      fields: Prisma.WhiteboardSnapshotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WhiteboardSnapshotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WhiteboardSnapshotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>
+        }
+        findFirst: {
+          args: Prisma.WhiteboardSnapshotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WhiteboardSnapshotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>
+        }
+        findMany: {
+          args: Prisma.WhiteboardSnapshotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>[]
+        }
+        create: {
+          args: Prisma.WhiteboardSnapshotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>
+        }
+        createMany: {
+          args: Prisma.WhiteboardSnapshotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WhiteboardSnapshotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>[]
+        }
+        delete: {
+          args: Prisma.WhiteboardSnapshotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>
+        }
+        update: {
+          args: Prisma.WhiteboardSnapshotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>
+        }
+        deleteMany: {
+          args: Prisma.WhiteboardSnapshotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WhiteboardSnapshotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WhiteboardSnapshotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>[]
+        }
+        upsert: {
+          args: Prisma.WhiteboardSnapshotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WhiteboardSnapshotPayload>
+        }
+        aggregate: {
+          args: Prisma.WhiteboardSnapshotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWhiteboardSnapshot>
+        }
+        groupBy: {
+          args: Prisma.WhiteboardSnapshotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WhiteboardSnapshotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WhiteboardSnapshotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WhiteboardSnapshotCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1594,6 +1819,40 @@ export const LearningEventScalarFieldEnum = {
 } as const
 
 export type LearningEventScalarFieldEnum = (typeof LearningEventScalarFieldEnum)[keyof typeof LearningEventScalarFieldEnum]
+
+
+export const WhiteboardScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  ownerId: 'ownerId',
+  nodeId: 'nodeId',
+  shareToken: 'shareToken',
+  shareRole: 'shareRole',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WhiteboardScalarFieldEnum = (typeof WhiteboardScalarFieldEnum)[keyof typeof WhiteboardScalarFieldEnum]
+
+
+export const WhiteboardMemberScalarFieldEnum = {
+  id: 'id',
+  whiteboardId: 'whiteboardId',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type WhiteboardMemberScalarFieldEnum = (typeof WhiteboardMemberScalarFieldEnum)[keyof typeof WhiteboardMemberScalarFieldEnum]
+
+
+export const WhiteboardSnapshotScalarFieldEnum = {
+  whiteboardId: 'whiteboardId',
+  state: 'state',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WhiteboardSnapshotScalarFieldEnum = (typeof WhiteboardSnapshotScalarFieldEnum)[keyof typeof WhiteboardSnapshotScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1824,6 +2083,34 @@ export type EnumLearningEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType
 export type ListEnumLearningEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LearningEventType[]'>
     
 
+
+/**
+ * Reference to a field of type 'WhiteboardRole'
+ */
+export type EnumWhiteboardRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WhiteboardRole'>
+    
+
+
+/**
+ * Reference to a field of type 'WhiteboardRole[]'
+ */
+export type ListEnumWhiteboardRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WhiteboardRole[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes'
+ */
+export type BytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes'>
+    
+
+
+/**
+ * Reference to a field of type 'Bytes[]'
+ */
+export type ListBytesFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Bytes[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -1932,6 +2219,9 @@ export type GlobalOmitConfig = {
   quizAttempt?: Prisma.QuizAttemptOmit
   userProgress?: Prisma.UserProgressOmit
   learningEvent?: Prisma.LearningEventOmit
+  whiteboard?: Prisma.WhiteboardOmit
+  whiteboardMember?: Prisma.WhiteboardMemberOmit
+  whiteboardSnapshot?: Prisma.WhiteboardSnapshotOmit
 }
 
 /* Types for Logging */

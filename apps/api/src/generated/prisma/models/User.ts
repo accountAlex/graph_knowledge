@@ -6,7 +6,7 @@
 /*
  * This file exports the `User` model and its related types.
  *
- * 🟢 You can import this file directly.
+ * You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
 import type * as $Enums from "../enums"
@@ -203,6 +203,8 @@ export type UserWhereInput = {
   notes?: Prisma.NodeNoteListRelationFilter
   quizAttempts?: Prisma.QuizAttemptListRelationFilter
   learningEvents?: Prisma.LearningEventListRelationFilter
+  ownedWhiteboards?: Prisma.WhiteboardListRelationFilter
+  whiteboardMemberships?: Prisma.WhiteboardMemberListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -218,6 +220,8 @@ export type UserOrderByWithRelationInput = {
   notes?: Prisma.NodeNoteOrderByRelationAggregateInput
   quizAttempts?: Prisma.QuizAttemptOrderByRelationAggregateInput
   learningEvents?: Prisma.LearningEventOrderByRelationAggregateInput
+  ownedWhiteboards?: Prisma.WhiteboardOrderByRelationAggregateInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -236,6 +240,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.NodeNoteListRelationFilter
   quizAttempts?: Prisma.QuizAttemptListRelationFilter
   learningEvents?: Prisma.LearningEventListRelationFilter
+  ownedWhiteboards?: Prisma.WhiteboardListRelationFilter
+  whiteboardMemberships?: Prisma.WhiteboardMemberListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -277,6 +283,8 @@ export type UserCreateInput = {
   notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -292,6 +300,8 @@ export type UserUncheckedCreateInput = {
   notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -307,6 +317,8 @@ export type UserUpdateInput = {
   notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -322,6 +334,8 @@ export type UserUncheckedUpdateInput = {
   notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -475,6 +489,34 @@ export type UserUpdateOneRequiredWithoutLearningEventsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLearningEventsInput, Prisma.UserUpdateWithoutLearningEventsInput>, Prisma.UserUncheckedUpdateWithoutLearningEventsInput>
 }
 
+export type UserCreateNestedOneWithoutOwnedWhiteboardsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedWhiteboardsInput, Prisma.UserUncheckedCreateWithoutOwnedWhiteboardsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedWhiteboardsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOwnedWhiteboardsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOwnedWhiteboardsInput, Prisma.UserUncheckedCreateWithoutOwnedWhiteboardsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOwnedWhiteboardsInput
+  upsert?: Prisma.UserUpsertWithoutOwnedWhiteboardsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOwnedWhiteboardsInput, Prisma.UserUpdateWithoutOwnedWhiteboardsInput>, Prisma.UserUncheckedUpdateWithoutOwnedWhiteboardsInput>
+}
+
+export type UserCreateNestedOneWithoutWhiteboardMembershipsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWhiteboardMembershipsInput, Prisma.UserUncheckedCreateWithoutWhiteboardMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWhiteboardMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutWhiteboardMembershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWhiteboardMembershipsInput, Prisma.UserUncheckedCreateWithoutWhiteboardMembershipsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWhiteboardMembershipsInput
+  upsert?: Prisma.UserUpsertWithoutWhiteboardMembershipsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWhiteboardMembershipsInput, Prisma.UserUpdateWithoutWhiteboardMembershipsInput>, Prisma.UserUncheckedUpdateWithoutWhiteboardMembershipsInput>
+}
+
 export type UserCreateWithoutChatSessionsInput = {
   id?: string
   email: string
@@ -487,6 +529,8 @@ export type UserCreateWithoutChatSessionsInput = {
   notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChatSessionsInput = {
@@ -501,6 +545,8 @@ export type UserUncheckedCreateWithoutChatSessionsInput = {
   notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutChatSessionsInput = {
@@ -531,6 +577,8 @@ export type UserUpdateWithoutChatSessionsInput = {
   notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChatSessionsInput = {
@@ -545,6 +593,8 @@ export type UserUncheckedUpdateWithoutChatSessionsInput = {
   notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotesInput = {
@@ -559,6 +609,8 @@ export type UserCreateWithoutNotesInput = {
   progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotesInput = {
@@ -573,6 +625,8 @@ export type UserUncheckedCreateWithoutNotesInput = {
   progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotesInput = {
@@ -603,6 +657,8 @@ export type UserUpdateWithoutNotesInput = {
   progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotesInput = {
@@ -617,6 +673,8 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutQuizAttemptsInput = {
@@ -631,6 +689,8 @@ export type UserCreateWithoutQuizAttemptsInput = {
   progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutQuizAttemptsInput = {
@@ -645,6 +705,8 @@ export type UserUncheckedCreateWithoutQuizAttemptsInput = {
   progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutQuizAttemptsInput = {
@@ -675,6 +737,8 @@ export type UserUpdateWithoutQuizAttemptsInput = {
   progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
@@ -689,6 +753,8 @@ export type UserUncheckedUpdateWithoutQuizAttemptsInput = {
   progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProgressInput = {
@@ -703,6 +769,8 @@ export type UserCreateWithoutProgressInput = {
   notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProgressInput = {
@@ -717,6 +785,8 @@ export type UserUncheckedCreateWithoutProgressInput = {
   notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
   learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProgressInput = {
@@ -747,6 +817,8 @@ export type UserUpdateWithoutProgressInput = {
   notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProgressInput = {
@@ -761,6 +833,8 @@ export type UserUncheckedUpdateWithoutProgressInput = {
   notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
   learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLearningEventsInput = {
@@ -775,6 +849,8 @@ export type UserCreateWithoutLearningEventsInput = {
   progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLearningEventsInput = {
@@ -789,6 +865,8 @@ export type UserUncheckedCreateWithoutLearningEventsInput = {
   progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
   quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLearningEventsInput = {
@@ -819,6 +897,8 @@ export type UserUpdateWithoutLearningEventsInput = {
   progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLearningEventsInput = {
@@ -833,6 +913,168 @@ export type UserUncheckedUpdateWithoutLearningEventsInput = {
   progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
   quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutOwnedWhiteboardsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name?: string | null
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutOwnedWhiteboardsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name?: string | null
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutOwnedWhiteboardsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOwnedWhiteboardsInput, Prisma.UserUncheckedCreateWithoutOwnedWhiteboardsInput>
+}
+
+export type UserUpsertWithoutOwnedWhiteboardsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOwnedWhiteboardsInput, Prisma.UserUncheckedUpdateWithoutOwnedWhiteboardsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOwnedWhiteboardsInput, Prisma.UserUncheckedCreateWithoutOwnedWhiteboardsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOwnedWhiteboardsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOwnedWhiteboardsInput, Prisma.UserUncheckedUpdateWithoutOwnedWhiteboardsInput>
+}
+
+export type UserUpdateWithoutOwnedWhiteboardsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOwnedWhiteboardsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  whiteboardMemberships?: Prisma.WhiteboardMemberUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutWhiteboardMembershipsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name?: string | null
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  notes?: Prisma.NodeNoteCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptCreateNestedManyWithoutUserInput
+  learningEvents?: Prisma.LearningEventCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardCreateNestedManyWithoutOwnerInput
+}
+
+export type UserUncheckedCreateWithoutWhiteboardMembershipsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name?: string | null
+  role?: $Enums.UserRole
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  progress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NodeNoteUncheckedCreateNestedManyWithoutUserInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedCreateNestedManyWithoutUserInput
+  learningEvents?: Prisma.LearningEventUncheckedCreateNestedManyWithoutUserInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedCreateNestedManyWithoutOwnerInput
+}
+
+export type UserCreateOrConnectWithoutWhiteboardMembershipsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutWhiteboardMembershipsInput, Prisma.UserUncheckedCreateWithoutWhiteboardMembershipsInput>
+}
+
+export type UserUpsertWithoutWhiteboardMembershipsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutWhiteboardMembershipsInput, Prisma.UserUncheckedUpdateWithoutWhiteboardMembershipsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutWhiteboardMembershipsInput, Prisma.UserUncheckedCreateWithoutWhiteboardMembershipsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutWhiteboardMembershipsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutWhiteboardMembershipsInput, Prisma.UserUncheckedUpdateWithoutWhiteboardMembershipsInput>
+}
+
+export type UserUpdateWithoutWhiteboardMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NodeNoteUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUpdateManyWithoutUserNestedInput
+  learningEvents?: Prisma.LearningEventUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUpdateManyWithoutOwnerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutWhiteboardMembershipsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  progress?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NodeNoteUncheckedUpdateManyWithoutUserNestedInput
+  quizAttempts?: Prisma.QuizAttemptUncheckedUpdateManyWithoutUserNestedInput
+  learningEvents?: Prisma.LearningEventUncheckedUpdateManyWithoutUserNestedInput
+  ownedWhiteboards?: Prisma.WhiteboardUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
 
@@ -846,6 +1088,8 @@ export type UserCountOutputType = {
   notes: number
   quizAttempts: number
   learningEvents: number
+  ownedWhiteboards: number
+  whiteboardMemberships: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -854,6 +1098,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notes?: boolean | UserCountOutputTypeCountNotesArgs
   quizAttempts?: boolean | UserCountOutputTypeCountQuizAttemptsArgs
   learningEvents?: boolean | UserCountOutputTypeCountLearningEventsArgs
+  ownedWhiteboards?: boolean | UserCountOutputTypeCountOwnedWhiteboardsArgs
+  whiteboardMemberships?: boolean | UserCountOutputTypeCountWhiteboardMembershipsArgs
 }
 
 /**
@@ -901,6 +1147,20 @@ export type UserCountOutputTypeCountLearningEventsArgs<ExtArgs extends runtime.T
   where?: Prisma.LearningEventWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOwnedWhiteboardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WhiteboardWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountWhiteboardMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WhiteboardMemberWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -915,6 +1175,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notes?: boolean | Prisma.User$notesArgs<ExtArgs>
   quizAttempts?: boolean | Prisma.User$quizAttemptsArgs<ExtArgs>
   learningEvents?: boolean | Prisma.User$learningEventsArgs<ExtArgs>
+  ownedWhiteboards?: boolean | Prisma.User$ownedWhiteboardsArgs<ExtArgs>
+  whiteboardMemberships?: boolean | Prisma.User$whiteboardMembershipsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -955,6 +1217,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notes?: boolean | Prisma.User$notesArgs<ExtArgs>
   quizAttempts?: boolean | Prisma.User$quizAttemptsArgs<ExtArgs>
   learningEvents?: boolean | Prisma.User$learningEventsArgs<ExtArgs>
+  ownedWhiteboards?: boolean | Prisma.User$ownedWhiteboardsArgs<ExtArgs>
+  whiteboardMemberships?: boolean | Prisma.User$whiteboardMembershipsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -968,6 +1232,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notes: Prisma.$NodeNotePayload<ExtArgs>[]
     quizAttempts: Prisma.$QuizAttemptPayload<ExtArgs>[]
     learningEvents: Prisma.$LearningEventPayload<ExtArgs>[]
+    ownedWhiteboards: Prisma.$WhiteboardPayload<ExtArgs>[]
+    whiteboardMemberships: Prisma.$WhiteboardMemberPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1376,6 +1642,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notes<T extends Prisma.User$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NodeNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   quizAttempts<T extends Prisma.User$quizAttemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$quizAttemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuizAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   learningEvents<T extends Prisma.User$learningEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$learningEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LearningEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ownedWhiteboards<T extends Prisma.User$ownedWhiteboardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedWhiteboardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WhiteboardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  whiteboardMemberships<T extends Prisma.User$whiteboardMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$whiteboardMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WhiteboardMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1917,6 +2185,54 @@ export type User$learningEventsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.LearningEventScalarFieldEnum | Prisma.LearningEventScalarFieldEnum[]
+}
+
+/**
+ * User.ownedWhiteboards
+ */
+export type User$ownedWhiteboardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Whiteboard
+   */
+  select?: Prisma.WhiteboardSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Whiteboard
+   */
+  omit?: Prisma.WhiteboardOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WhiteboardInclude<ExtArgs> | null
+  where?: Prisma.WhiteboardWhereInput
+  orderBy?: Prisma.WhiteboardOrderByWithRelationInput | Prisma.WhiteboardOrderByWithRelationInput[]
+  cursor?: Prisma.WhiteboardWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WhiteboardScalarFieldEnum | Prisma.WhiteboardScalarFieldEnum[]
+}
+
+/**
+ * User.whiteboardMemberships
+ */
+export type User$whiteboardMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WhiteboardMember
+   */
+  select?: Prisma.WhiteboardMemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WhiteboardMember
+   */
+  omit?: Prisma.WhiteboardMemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WhiteboardMemberInclude<ExtArgs> | null
+  where?: Prisma.WhiteboardMemberWhereInput
+  orderBy?: Prisma.WhiteboardMemberOrderByWithRelationInput | Prisma.WhiteboardMemberOrderByWithRelationInput[]
+  cursor?: Prisma.WhiteboardMemberWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WhiteboardMemberScalarFieldEnum | Prisma.WhiteboardMemberScalarFieldEnum[]
 }
 
 /**

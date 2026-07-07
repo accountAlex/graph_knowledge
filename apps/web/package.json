@@ -11,10 +11,13 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.1",
+    "@hocuspocus/provider": "^4.3.0",
     "@mathgraph/shared": "^0.0.1",
     "3d-force-graph": "^1.79.1",
     "framer-motion": "^11.18.2",
     "katex": "^0.16.42",
+    "mathjax-full": "^3.2.1",
     "mathlive": "^0.109.0",
     "next": "16.1.6",
     "react": "19.2.3",
@@ -25,7 +28,9 @@
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "three": "^0.183.2",
-    "three-spritetext": "^1.10.0"
+    "three-spritetext": "^1.10.0",
+    "y-websocket": "^3.0.0",
+    "yjs": "^13.6.31"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

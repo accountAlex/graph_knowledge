@@ -6,7 +6,7 @@
 /*
  * WARNING: This is an internal file that is subject to change!
  *
- * 🛑 Under no circumstances should you import this file directly! 🛑
+ * Under no circumstances should you import this file directly! 🛑
  *
  * All exports from this file are wrapped under a `Prisma` namespace object in the browser.ts file.
  * While this enables partial backward compatibility, it is not part of the stable public API.
@@ -63,7 +63,10 @@ export const ModelName = {
   NodeQuestion: 'NodeQuestion',
   QuizAttempt: 'QuizAttempt',
   UserProgress: 'UserProgress',
-  LearningEvent: 'LearningEvent'
+  LearningEvent: 'LearningEvent',
+  Whiteboard: 'Whiteboard',
+  WhiteboardMember: 'WhiteboardMember',
+  WhiteboardSnapshot: 'WhiteboardSnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -259,6 +262,40 @@ export const LearningEventScalarFieldEnum = {
 } as const
 
 export type LearningEventScalarFieldEnum = (typeof LearningEventScalarFieldEnum)[keyof typeof LearningEventScalarFieldEnum]
+
+
+export const WhiteboardScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  ownerId: 'ownerId',
+  nodeId: 'nodeId',
+  shareToken: 'shareToken',
+  shareRole: 'shareRole',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WhiteboardScalarFieldEnum = (typeof WhiteboardScalarFieldEnum)[keyof typeof WhiteboardScalarFieldEnum]
+
+
+export const WhiteboardMemberScalarFieldEnum = {
+  id: 'id',
+  whiteboardId: 'whiteboardId',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type WhiteboardMemberScalarFieldEnum = (typeof WhiteboardMemberScalarFieldEnum)[keyof typeof WhiteboardMemberScalarFieldEnum]
+
+
+export const WhiteboardSnapshotScalarFieldEnum = {
+  whiteboardId: 'whiteboardId',
+  state: 'state',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WhiteboardSnapshotScalarFieldEnum = (typeof WhiteboardSnapshotScalarFieldEnum)[keyof typeof WhiteboardSnapshotScalarFieldEnum]
 
 
 export const SortOrder = {

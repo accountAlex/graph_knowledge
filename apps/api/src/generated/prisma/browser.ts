@@ -10,7 +10,7 @@
  * This file does not contain a `PrismaClient` class, nor several other helpers that are intended as server-side only.
  * See `client.ts` for the standard, server-side entry point.
  *
- * 🟢 You can import this file directly.
+ * You can import this file directly.
  */
 
 import * as Prisma from './internal/prismaNamespaceBrowser'
@@ -82,3 +82,18 @@ export type UserProgress = Prisma.UserProgressModel
  * 
  */
 export type LearningEvent = Prisma.LearningEventModel
+/**
+ * Model Whiteboard
+ * 
+ */
+export type Whiteboard = Prisma.WhiteboardModel
+/**
+ * Model WhiteboardMember
+ * 
+ */
+export type WhiteboardMember = Prisma.WhiteboardMemberModel
+/**
+ * Model WhiteboardSnapshot
+ * 
+ */
+export type WhiteboardSnapshot = Prisma.WhiteboardSnapshotModel

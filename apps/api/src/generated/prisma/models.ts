@@ -6,7 +6,7 @@
 /*
  * This is a barrel export file for all models and their related types.
  *
- * 🟢 You can import this file directly.
+ * You can import this file directly.
  */
 export type * from './models/User'
 export type * from './models/ChatSession'
@@ -21,4 +21,7 @@ export type * from './models/NodeQuestion'
 export type * from './models/QuizAttempt'
 export type * from './models/UserProgress'
 export type * from './models/LearningEvent'
+export type * from './models/Whiteboard'
+export type * from './models/WhiteboardMember'
+export type * from './models/WhiteboardSnapshot'
 export type * from './commonInputTypes'

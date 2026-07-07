@@ -11,6 +11,7 @@ const PRIMARY_LINKS = [
   { href: "/presets", label: "Программы" },
   { href: "/roadmap", label: "Граф знаний" },
   { href: "/route", label: "AI-репетитор" },
+  { href: "/boards", label: "Доски" },
 ];
 
 const SECONDARY_LINKS = [{ href: "/analytics", label: "Аналитика", icon: "◉" }];

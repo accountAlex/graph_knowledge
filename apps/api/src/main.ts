@@ -1,7 +1,9 @@
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import type { Server as HttpServer } from "node:http";
 import { AppModule } from "./app.module";
+import { WhiteboardSyncService } from "./whiteboard/whiteboard-sync.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -35,5 +37,9 @@ async function bootstrap() {
 
   const port = process.env.PORT ? Number(process.env.PORT) : 3001;
   await app.listen(port);
+
+  // Attach the collaborative-whiteboard sync server (Hocuspocus) to the same
+  // HTTP server / port on the `/collab` upgrade path.
+  app.get(WhiteboardSyncService).bindTo(app.getHttpServer() as HttpServer);
 }
 bootstrap();

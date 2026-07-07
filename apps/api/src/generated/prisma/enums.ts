@@ -6,7 +6,7 @@
 /*
 * This file exports all enum related types from the schema.
 *
-* 🟢 You can import this file directly.
+* You can import this file directly.
 */
 
 export const UserRole = {
@@ -76,3 +76,11 @@ export const LearningEventType = {
 } as const
 
 export type LearningEventType = (typeof LearningEventType)[keyof typeof LearningEventType]
+
+
+export const WhiteboardRole = {
+  VIEWER: 'VIEWER',
+  EDITOR: 'EDITOR'
+} as const
+
+export type WhiteboardRole = (typeof WhiteboardRole)[keyof typeof WhiteboardRole]

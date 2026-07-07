@@ -230,3 +230,53 @@ export interface CreateEdgeDto {
   to: string;
   type: EdgeKind;
 }
+
+// ──────── Whiteboard (collaborative board) ────────
+export type WhiteboardRole = "VIEWER" | "EDITOR";
+export type WhiteboardEffectiveRole = "OWNER" | WhiteboardRole;
+
+export interface WhiteboardUserRef {
+  id: string;
+  email: string;
+  name: string | null;
+}
+
+export interface WhiteboardSummary {
+  id: string;
+  title: string;
+  ownerId: string;
+  nodeId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  memberCount: number;
+  role: WhiteboardEffectiveRole;
+}
+
+export interface WhiteboardMemberInfo {
+  id: string;
+  whiteboardId: string;
+  userId: string;
+  role: WhiteboardRole;
+  createdAt: string;
+  user: WhiteboardUserRef;
+}
+
+export interface WhiteboardDetail {
+  id: string;
+  title: string;
+  ownerId: string;
+  nodeId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  role: WhiteboardEffectiveRole;
+  owner: WhiteboardUserRef;
+  members: WhiteboardMemberInfo[];
+  // Present only for the owner.
+  shareToken?: string | null;
+  shareRole?: WhiteboardRole | null;
+}
+
+export interface WhiteboardShareLink {
+  shareToken: string;
+  shareRole: WhiteboardRole;
+}

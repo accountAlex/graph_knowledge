@@ -11,9 +11,13 @@
   "scripts": {
     "dev:api": "npm --workspace ./apps/api run start:dev",
     "dev:web": "npm --workspace ./apps/web run dev",
+    "dev:yws": "node scripts/yws-spike-server.mjs",
     "test:web": "npm --workspace ./apps/web run test:run",
     "test:api": "npm --workspace ./apps/api run test",
     "lint": "npm --workspaces run lint",
     "format": "npm --workspaces run format"
+  },
+  "devDependencies": {
+    "ws": "^8.21.0"
   }
 }
